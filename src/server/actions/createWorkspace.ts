@@ -4,7 +4,9 @@ import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { prisma } from "@/src/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export const createWorkspace = async (formData: FormData) => {
+export const createWorkspace = async (
+    formData: FormData,
+) => {
     const name = String(formData.get("name") || "").trim();
 
     if (!name) {

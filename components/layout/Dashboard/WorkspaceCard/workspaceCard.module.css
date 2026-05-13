@@ -1,0 +1,26 @@
+.cardLink {
+    text-decoration: none;
+    color: inherit;
+}
+
+.meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.documents,
+.updated {
+    color: var(--color-text-muted);
+}
+
+.cardLink:hover .documents,
+.cardLink:hover .updated {
+    color: var(--color-text-primary);
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

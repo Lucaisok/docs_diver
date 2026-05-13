@@ -19,4 +19,6 @@ export const SiteContent = {
     create: "Create",
     namespace: "New workspace name...",
     close: "Close",
+    noWorkspacesTitle: "No workspaces yet",
+    noWorkspacesDescription: "Create a workspace to start uploading documents.",
 };
