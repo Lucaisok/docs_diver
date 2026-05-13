@@ -16,4 +16,7 @@ export const SiteContent = {
     ask: "Ask",
     noDocumentsTitle: "No documents yet",
     noDocumentsDescription: "Upload PDFs to build this workspace.",
+    create: "Create",
+    namespace: "New workspace name...",
+    close: "Close",
 };

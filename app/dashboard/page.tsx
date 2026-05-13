@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell/AppShell";
 import Card from "@/components/Card/Card";
@@ -5,6 +7,9 @@ import styles from "./page.module.css";
 import Button from "@/components/Button/Button";
 import { SiteContent } from "@/src/lib/content";
 import { routes } from "@/src/lib/routes";
+import { CreateWorkspaceForm } from "@/components/layout/Workspace/CreateWorkspaceForm/CreateWorkspaceForm";
+import { useState } from "react";
+import Modal from "@/components/Modal/Modal";
 
 const mockWorkspaces = [
     {
@@ -23,6 +28,7 @@ const mockWorkspaces = [
 
 export default function DashboardPage() {
     const content = SiteContent;
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     return (
         <AppShell>
@@ -34,8 +40,17 @@ export default function DashboardPage() {
                     </p>
                 </div>
 
-                <Button>{content.newWorkspace}</Button>
+                <Button onClick={() => setIsModalVisible(true)}>{content.newWorkspace}</Button>
             </div>
+
+            <Modal
+                isOpen={isModalVisible}
+                onClose={() => setIsModalVisible(false)}
+                title={content.newWorkspace}
+                description={content.workspacesDescription}
+            >
+                <CreateWorkspaceForm />
+            </Modal>
 
             <div className={styles.grid}>
                 {mockWorkspaces.map((workspace) => (
