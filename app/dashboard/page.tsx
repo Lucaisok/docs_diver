@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { AppShell } from "@/components/layout/app-shell";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AppShell } from "@/components/AppShell/AppShell";
+import Card from "@/components/Card/Card";
+import styles from "./page.module.css";
+import Button from "@/components/Button/Button";
+import { SiteContent } from "@/src/lib/content";
+import { routes } from "@/src/lib/routes";
 
 const mockWorkspaces = [
     {
@@ -19,31 +22,33 @@ const mockWorkspaces = [
 ];
 
 export default function DashboardPage() {
+    const content = SiteContent;
+
     return (
         <AppShell>
-            <div className="mb-8 flex items-center justify-between">
+            <div className={styles.header}>
                 <div>
-                    <h1 className="text-3xl font-semibold tracking-tight">Workspaces</h1>
-                    <p className="mt-2 text-muted-foreground">
-                        Organize documents, ask questions, and generate grounded answers.
+                    <h1 className={styles.title}>{content.workspaces}</h1>
+                    <p className={styles.subtitle}>
+                        {content.workspacesDescription}
                     </p>
                 </div>
 
-                <Button>New workspace</Button>
+                <Button>{content.newWorkspace}</Button>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className={styles.grid}>
                 {mockWorkspaces.map((workspace) => (
-                    <Link key={workspace.id} href={`/workspaces/${workspace.id}`}>
-                        <Card className="transition hover:bg-muted/50 surface surface-hover soft-panel">
-                            <CardHeader>
-                                <CardTitle>{workspace.name}</CardTitle>
-                            </CardHeader>
-
-                            <CardContent className="text-sm text-muted-foreground">
-                                <p>{workspace.documents} documents</p>
-                                <p>Updated {workspace.updatedAt}</p>
-                            </CardContent>
+                    <Link
+                        key={workspace.id}
+                        href={routes.workspace(workspace.id)}
+                        className={styles.cardLink}
+                    >
+                        <Card title={workspace.name}>
+                            <div className={styles.meta}>
+                                <p className={styles.documents}>{workspace.documents} {content.documents}</p>
+                                <p className={styles.updated}>{content.updated} {workspace.updatedAt}</p>
+                            </div>
                         </Card>
                     </Link>
                 ))}

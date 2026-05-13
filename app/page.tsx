@@ -1,22 +1,26 @@
+import Button from "@/components/Button/Button";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import styles from "./page.module.css";
+import { SiteContent } from "@/src/lib/content";
+import { routes } from "@/src/lib/routes";
 
 export default function HomePage() {
+  const content = SiteContent;
+
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="max-w-2xl text-center">
-        <h1 className="text-5xl font-semibold tracking-tight">
-          AI Technical Knowledge Workspace
+    <main className={styles.main}>
+      <div className={styles.container}>
+        <h1 className={styles.heading}>
+          {content.title}
         </h1>
 
-        <p className="mt-6 text-lg text-muted-foreground">
-          Upload technical documents, search them semantically, and get
-          citation-based AI answers.
+        <p className={styles.description}>
+          {content.description}
         </p>
 
-        <div className="mt-8">
-          <Button asChild className="primary-glow">
-            <Link href="/dashboard">Open dashboard</Link>
+        <div className={styles.actions}>
+          <Button>
+            <Link href={routes.dashboard} className={styles.link}>{content.dashboard}</Link>
           </Button>
         </div>
       </div>

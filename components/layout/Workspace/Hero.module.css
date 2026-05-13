@@ -1,0 +1,25 @@
+.hero {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    color: var(--color-text-primary);
+    font-size: 1.875rem;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.description {
+    margin-top: var(--spacing-sm);
+    color: var(--color-text-muted);
+}
