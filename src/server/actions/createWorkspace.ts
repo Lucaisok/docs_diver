@@ -6,11 +6,11 @@ import { revalidatePath } from "next/cache";
 
 export const createWorkspace = async (
     formData: FormData,
-) => {
+): Promise<{ success: boolean; error: string | null; }> => {
     const name = String(formData.get("name") || "").trim();
 
     if (!name) {
-        throw new Error("Workspace name is required");
+        return { success: false, error: "Workspace name is required" };
     }
 
     try {
@@ -23,12 +23,13 @@ export const createWorkspace = async (
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2002") {
-                throw new Error("A workspace with this name already exists");
+                return { success: false, error: "A workspace with this name already exists" };
             }
         }
 
-        throw new Error("Unable to create workspace right now. Please try again.");
+        return { success: false, error: "Unable to create workspace right now. Please try again." };
     }
 
     revalidatePath("/dashboard");
+    return { success: true, error: null };
 };

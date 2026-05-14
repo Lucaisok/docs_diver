@@ -42,6 +42,8 @@ model Workspace {
   documents Document[]
   chunks    DocumentChunk[]
   chats     Chat[]
+
+  @@unique([userId, name])
 }
 
 model Document {
