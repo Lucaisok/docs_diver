@@ -2,13 +2,14 @@
 import { useEffect, useState } from "react";
 import { HeroSection } from "../Hero/HeroSection";
 import { WorkspacesSection } from "../WorkspacesSection/WorkspacesSection";
-import { getWorkspacesByUserId } from "@/src/server/queries/workspaces";
+import { GetWorkspacesByUserIdResult } from "@/src/server/queries/workspaces";
 
 interface DashboardShellProps {
-    workspaces: Awaited<ReturnType<typeof getWorkspacesByUserId>>;
+    workspaces: GetWorkspacesByUserIdResult["data"];
+    workspacesError: string | null;
 }
 
-export const DashboardShell = ({ workspaces }: DashboardShellProps) => {
+export const DashboardShell = ({ workspaces, workspacesError }: DashboardShellProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
@@ -18,7 +19,7 @@ export const DashboardShell = ({ workspaces }: DashboardShellProps) => {
     return (
         <>
             <HeroSection isModalVisible={isModalVisible} toggleModalVisibility={setIsModalVisible} />
-            <WorkspacesSection workspaces={workspaces} />
+            <WorkspacesSection workspaces={workspaces} error={workspacesError} />
         </>
     );
 };

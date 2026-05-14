@@ -3,7 +3,7 @@ import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { DashboardShell } from "./DashboardShell";
 
 export const Wrapper = async () => {
-    const workspaces = await getWorkspacesByUserId(DEV_USER_ID);
+    const result = await getWorkspacesByUserId(DEV_USER_ID);
 
-    return <DashboardShell workspaces={workspaces} />;
+    return <DashboardShell workspaces={result.data} workspacesError={result.error} />;
 };

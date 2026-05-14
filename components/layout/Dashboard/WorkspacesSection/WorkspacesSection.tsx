@@ -1,13 +1,18 @@
 import { EmptyDashboardCard } from "../EmptyDashboardCard/EmptyDashboardCard";
 import styles from "./workspacesSection.module.css";
 import { WorkspaceCard } from "../WorkspaceCard/WorkspaceCard";
-import { getWorkspacesByUserId } from "@/src/server/queries/workspaces";
+import { GetWorkspacesByUserIdResult } from "@/src/server/queries/workspaces";
 
 interface WorkspacesSectionProps {
-    workspaces: Awaited<ReturnType<typeof getWorkspacesByUserId>>;
+    workspaces: GetWorkspacesByUserIdResult["data"];
+    error: string | null;
 }
 
-export const WorkspacesSection = ({ workspaces }: WorkspacesSectionProps) => {
+export const WorkspacesSection = ({ workspaces, error }: WorkspacesSectionProps) => {
+
+    if (error) {
+        return <p className={styles.error}>{error}</p>;
+    }
 
     return (
         <div className={styles.grid}>

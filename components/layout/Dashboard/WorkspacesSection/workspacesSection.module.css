@@ -4,3 +4,8 @@
     gap: var(--spacing-md);
     justify-content: start;
 }
+
+.error {
+    color: #dc2626;
+    font-size: 0.95rem;
+}

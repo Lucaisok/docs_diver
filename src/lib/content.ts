@@ -21,4 +21,9 @@ export const SiteContent = {
     close: "Close",
     noWorkspacesTitle: "No workspaces yet",
     noWorkspacesDescription: "Create a workspace to start uploading documents.",
+    workspaceNameRequired: "Workspace name is required",
+    workspaceNameExists: "A workspace with this name already exists",
+    workspaceCreationError: "Unable to create workspace right now. Please try again.",
+    noUserIdError: "User id is required to load workspaces.",
+    getWorkspacesError: "Unable to load workspaces right now. Please try again."
 };

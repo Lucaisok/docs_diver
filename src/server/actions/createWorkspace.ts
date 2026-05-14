@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { prisma } from "@/src/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { SiteContent } from "@/src/lib/content";
 
 export const createWorkspace = async (
     formData: FormData,
@@ -10,7 +11,7 @@ export const createWorkspace = async (
     const name = String(formData.get("name") || "").trim();
 
     if (!name) {
-        return { success: false, error: "Workspace name is required" };
+        return { success: false, error: SiteContent.workspaceNameRequired };
     }
 
     try {
@@ -23,11 +24,11 @@ export const createWorkspace = async (
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2002") {
-                return { success: false, error: "A workspace with this name already exists" };
+                return { success: false, error: SiteContent.workspaceNameExists };
             }
         }
 
-        return { success: false, error: "Unable to create workspace right now. Please try again." };
+        return { success: false, error: SiteContent.workspaceCreationError };
     }
 
     revalidatePath("/dashboard");
