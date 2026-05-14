@@ -10,6 +10,7 @@ export const SiteContent = {
     askQuestions: "Ask questions across indexed technical documents.",
     uploadPDF: "Upload PDF",
     chat: "Chat",
+    chats: "Chats",
     firstQuestion: "Ask your first question",
     questionPlaceholder: "Ask a question about your documents...",
     promptDescription: "Once documents are indexed, answers will include citations from your sources.",
@@ -25,5 +26,8 @@ export const SiteContent = {
     workspaceNameExists: "A workspace with this name already exists",
     workspaceCreationError: "Unable to create workspace right now. Please try again.",
     noUserIdError: "User id is required to load workspaces.",
-    getWorkspacesError: "Unable to load workspaces right now. Please try again."
+    getWorkspacesError: "Unable to load workspaces right now. Please try again.",
+    noWorkspaceIdError: "Workspace id is required.",
+    workspaceNotFoundError: "Workspace not found.",
+    status: "Status"
 };

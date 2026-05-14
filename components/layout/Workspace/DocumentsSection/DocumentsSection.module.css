@@ -20,3 +20,28 @@
     margin-top: var(--spacing-lg);
     width: 100%;
 }
+
+.documentsList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.documentRow {
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border-dark);
+    background: var(--color-surface-2);
+    padding: var(--spacing-md);
+}
+
+.documentName {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.documentMeta {
+    margin-top: var(--spacing-2xs);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+}

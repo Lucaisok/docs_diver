@@ -1,21 +1,13 @@
 import { SiteContent } from "@/src/lib/content";
 import { prisma } from "@/src/lib/prisma";
+import { QueryResult, WorkspaceDetails, WorkspaceListItem } from "@/src/types/workspace";
 
-export interface GetWorkspacesByUserIdResult {
-    success: boolean;
-    data: Array<{
-        id: string;
-        name: string;
-        updatedAt: Date;
-        _count: {
-            documents: number;
-        };
-    }>;
-    error: string | null;
-}
+export type Workspaces = WorkspaceListItem[];
+
+export type GetWorkspacesByUserIdResult = QueryResult<Workspaces>;
 
 export const getWorkspacesByUserId = async (userId: string): Promise<GetWorkspacesByUserIdResult> => {
-    if (!userId.trim()) {
+    if (!userId) {
         return {
             success: false,
             data: [],
@@ -53,4 +45,60 @@ export const getWorkspacesByUserId = async (userId: string): Promise<GetWorkspac
             error: SiteContent.getWorkspacesError,
         };
     }
+};
+
+
+export type WorkspaceWithDocuments = WorkspaceDetails;
+
+export type GetWorkspaceByIdResult = QueryResult<WorkspaceWithDocuments | null>;
+
+export const getWorkspaceById = async (workspaceId: string, userId: string): Promise<GetWorkspaceByIdResult> => {
+    if (!userId) {
+        return {
+            success: false,
+            data: null,
+            error: SiteContent.noUserIdError,
+        };
+    }
+    if (!workspaceId) {
+        return {
+            success: false,
+            data: null,
+            error: SiteContent.noWorkspaceIdError,
+        };
+    }
+    try {
+        const workspace = await prisma.workspace.findFirst({
+            where: {
+                id: workspaceId,
+                userId,
+            },
+            include: {
+                documents: {
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+                },
+                _count: {
+                    select: {
+                        documents: true,
+                        chats: true,
+                    },
+                },
+            },
+        });
+        return {
+            success: workspace !== null,
+            data: workspace,
+            error: workspace === null ? SiteContent.workspaceNotFoundError : null
+        };
+    } catch (error) {
+        console.error("Failed to load workspace", { userId, workspaceId, error });
+        return {
+            success: false,
+            data: null,
+            error: SiteContent.getWorkspacesError,
+        };
+    }
+
 };

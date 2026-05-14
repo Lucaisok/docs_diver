@@ -19,6 +19,11 @@
     line-height: 1.2;
 }
 
+.subtitle {
+    margin-top: var(--spacing-sm);
+    color: var(--color-text-muted);
+}
+
 .description {
     margin-top: var(--spacing-sm);
     color: var(--color-text-muted);
