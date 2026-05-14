@@ -1,0 +1,72 @@
+.page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: var(--spacing-xl);
+}
+
+.card {
+    width: min(36rem, 100%);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-dark);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    text-align: center;
+}
+
+.code {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    margin-bottom: 0.5rem;
+}
+
+.title {
+    color: var(--color-text-primary);
+    font-size: 1.875rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.description {
+    margin-top: 0.75rem;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-md);
+}
+
+.actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.primaryAction,
+.secondaryAction {
+    text-decoration: none;
+    border-radius: var(--border-radius-md);
+    padding: 0.55rem 0.9rem;
+    font-size: var(--font-size-sm);
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.primaryAction {
+    background: var(--color-text-primary);
+    color: var(--color-bg);
+    border: 1px solid transparent;
+}
+
+.primaryAction:hover {
+    background: var(--color-gray-light);
+}
+
+.secondaryAction {
+    border: 1px solid var(--color-border-dark);
+    color: var(--color-text-primary);
+}
+
+.secondaryAction:hover {
+    border-color: var(--color-text-muted);
+    background: var(--color-surface-hover);
+}

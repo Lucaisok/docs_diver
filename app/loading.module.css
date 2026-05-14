@@ -1,0 +1,60 @@
+.page {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 2rem var(--spacing-xl);
+}
+
+.hero {
+    margin-bottom: 1.5rem;
+}
+
+.titleSkeleton,
+.textSkeleton,
+.cardSkeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-dark);
+}
+
+.titleSkeleton::after,
+.textSkeleton::after,
+.cardSkeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    animation: shimmer 1.2s infinite;
+}
+
+.titleSkeleton {
+    width: min(20rem, 70%);
+    height: 2rem;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 0.75rem;
+}
+
+.textSkeleton {
+    width: min(30rem, 95%);
+    height: 1rem;
+    border-radius: var(--border-radius-sm);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 22rem));
+    gap: var(--spacing-md);
+    justify-content: start;
+}
+
+.cardSkeleton {
+    height: 8.5rem;
+    border-radius: var(--border-radius-lg);
+}
+
+@keyframes shimmer {
+    to {
+        transform: translateX(100%);
+    }
+}
