@@ -33,5 +33,6 @@ export const SiteContent = {
     documentUploadError: "Unable to upload document right now. Please try again.",
     noPDFError: "PDF file is required",
     wrongFileTypeError: "Only PDF files are supported",
-    uploadPDFDescription: "Upload a PDF to index it in this workspace and start asking grounded questions."
+    uploadPDFDescription: "Upload a PDF to index it in this workspace and start asking grounded questions.",
+    uploading: "Uploading..."
 };
