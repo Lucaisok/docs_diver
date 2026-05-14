@@ -1,11 +1,13 @@
-import { DEV_USER_ID } from "@/src/lib/dev-user";
-import { getWorkspacesByUserId } from "@/src/server/queries/workspaces";
 import { EmptyDashboardCard } from "../EmptyDashboardCard/EmptyDashboardCard";
 import styles from "./workspacesSection.module.css";
 import { WorkspaceCard } from "../WorkspaceCard/WorkspaceCard";
+import { getWorkspacesByUserId } from "@/src/server/queries/workspaces";
 
-export const WorkspacesSection = async () => {
-    const workspaces = await getWorkspacesByUserId(DEV_USER_ID);
+interface WorkspacesSectionProps {
+    workspaces: Awaited<ReturnType<typeof getWorkspacesByUserId>>;
+}
+
+export const WorkspacesSection = ({ workspaces }: WorkspacesSectionProps) => {
 
     return (
         <div className={styles.grid}>
