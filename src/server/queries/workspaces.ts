@@ -1,10 +1,11 @@
 import { SiteContent } from "@/src/lib/content";
 import { prisma } from "@/src/lib/prisma";
-import { QueryResult, WorkspaceDetails, WorkspaceListItem } from "@/src/types/workspace";
+import { Result } from "@/src/types/result";
+import { WorkspaceDetails, WorkspaceListItem } from "@/src/types/workspace";
 
 export type Workspaces = WorkspaceListItem[];
 
-export type GetWorkspacesByUserIdResult = QueryResult<Workspaces>;
+export type GetWorkspacesByUserIdResult = Result<Workspaces>;
 
 export const getWorkspacesByUserId = async (userId: string): Promise<GetWorkspacesByUserIdResult> => {
     if (!userId) {
@@ -50,7 +51,7 @@ export const getWorkspacesByUserId = async (userId: string): Promise<GetWorkspac
 
 export type WorkspaceWithDocuments = WorkspaceDetails;
 
-export type GetWorkspaceByIdResult = QueryResult<WorkspaceWithDocuments | null>;
+export type GetWorkspaceByIdResult = Result<WorkspaceWithDocuments | null>;
 
 export const getWorkspaceById = async (workspaceId: string, userId: string): Promise<GetWorkspaceByIdResult> => {
     if (!userId) {

@@ -1,0 +1,15 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.submit {
+    width: 100%;
+}
+
+.error {
+    color: var(--color-error, #ef4444);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-xs);
+}

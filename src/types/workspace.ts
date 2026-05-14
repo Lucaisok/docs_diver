@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+export type { Result } from "@/src/types/result";
 
 export type WorkspaceListItem = Prisma.WorkspaceGetPayload<{
     include: {
@@ -23,9 +24,3 @@ export type WorkspaceDetails = Prisma.WorkspaceGetPayload<{
         };
     };
 }>;
-
-export interface QueryResult<T> {
-    success: boolean;
-    data: T;
-    error: string | null;
-}

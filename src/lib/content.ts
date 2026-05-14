@@ -29,5 +29,9 @@ export const SiteContent = {
     getWorkspacesError: "Unable to load workspaces right now. Please try again.",
     noWorkspaceIdError: "Workspace id is required.",
     workspaceNotFoundError: "Workspace not found.",
-    status: "Status"
+    status: "Status",
+    documentUploadError: "Unable to upload document right now. Please try again.",
+    noPDFError: "PDF file is required",
+    wrongFileTypeError: "Only PDF files are supported",
+    uploadPDFDescription: "Upload a PDF to index it in this workspace and start asking grounded questions."
 };

@@ -1,0 +1,12 @@
+.layout {
+    display: grid;
+    min-height: calc(100vh - 180px);
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+    .layout {
+        grid-template-columns: 1fr 320px;
+    }
+}

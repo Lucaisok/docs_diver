@@ -6,9 +6,10 @@ interface HeroProps {
     workspaceName: string;
     documentsNumber: number;
     chatsNumber: number;
+    openModal: () => void;
 }
 
-export const Hero = ({ workspaceName, documentsNumber, chatsNumber }: HeroProps) => {
+export const Hero = ({ workspaceName, documentsNumber, chatsNumber, openModal }: HeroProps) => {
     return <div className={styles.hero}>
         <div className={styles.content}>
             <h1 className={styles.title}>
@@ -22,7 +23,7 @@ export const Hero = ({ workspaceName, documentsNumber, chatsNumber }: HeroProps)
             </p>
         </div>
 
-        <Button>{SiteContent.uploadPDF}</Button>
+        <Button onClick={openModal}>{SiteContent.uploadPDF}</Button>
     </div>;
 
 };

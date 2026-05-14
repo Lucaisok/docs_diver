@@ -6,9 +6,10 @@ import { WorkspaceDocument } from "@/src/types/workspace";
 
 interface DocumentsSectionProps {
     documents: WorkspaceDocument[];
+    openModal: () => void;
 }
 
-export const DocumentsSection = ({ documents }: DocumentsSectionProps) => {
+export const DocumentsSection = ({ documents, openModal }: DocumentsSectionProps) => {
     const hasDocuments = documents.length > 0;
     return <Card title={SiteContent.documents}>
         {!hasDocuments ?
@@ -17,7 +18,7 @@ export const DocumentsSection = ({ documents }: DocumentsSectionProps) => {
                 <p className={styles.description}>
                     {SiteContent.noDocumentsDescription}
                 </p>
-                <Button className={styles.cta}>{SiteContent.uploadPDF}</Button>
+                <Button className={styles.cta} onClick={openModal}>{SiteContent.uploadPDF}</Button>
             </div>
             : <div className={styles.documentsList}>
                 {documents.map((document) => (
