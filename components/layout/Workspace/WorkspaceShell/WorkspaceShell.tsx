@@ -29,7 +29,7 @@ export const WorkspaceShell = ({ workspace, workspaceId }: WorkspaceShellProps) 
             title={SiteContent.uploadPDF}
             description={SiteContent.uploadPDFDescription}
         >
-            <UploadDocumentForm workspaceId={workspaceId} />
+            <UploadDocumentForm workspaceId={workspaceId} onSuccess={() => setIsModalVisible(false)} />
         </Modal>
     </>;
 };

@@ -9,21 +9,23 @@ import { SiteContent } from "@/src/lib/content";
 
 type UploadDocumentFormProps = {
     workspaceId: string;
+    onSuccess: () => void;
 };
 
-export function UploadDocumentForm({ workspaceId }: UploadDocumentFormProps) {
+export function UploadDocumentForm({ workspaceId, onSuccess }: UploadDocumentFormProps) {
     const [error, setError] = useState<string | null>(null);
 
     const handleFormSubmission = async (formData: FormData) => {
         const result = await uploadDocument(formData);
         if (result.success) {
             setError(null);
+            onSuccess();
         } else {
             setError(result.error);
         }
     };
     return (
-        <> <form action={handleFormSubmission} className={styles.form}>
+        <> <form action={handleFormSubmission} className={styles.form} onFocus={() => setError(null)}>
             <input type="hidden" name="workspaceId" value={workspaceId} />
             <Input name="file" type="file" accept="application/pdf" />
             <Button type="submit" className={styles.submit}>
