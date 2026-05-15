@@ -35,6 +35,20 @@ const createSafeFileName = (originalName: string) => {
     return `${Date.now()}-${baseName}${extension}`;
 };
 
+// Parses the PDF at filePath, splits the extracted text into overlapping chunks,
+// generates an embedding vector for each chunk, then inserts all chunks into the
+// DocumentChunk table in a single transaction.
+//
+// Chunking strategy: 3000-character windows with 300-character overlap so that
+// context around chunk boundaries is not lost during retrieval.
+//
+// The embedding column is a pgvector `vector(1536)` type. Prisma does not
+// support custom column types natively, so we bypass the ORM and use a raw
+// INSERT with the `::vector` cast for each row.
+//
+// The entire batch is wrapped in a transaction — if any single INSERT fails
+// (e.g. wrong embedding dimensions) all chunks are rolled back, keeping the
+// document in a consistent state before the caller sets its status to FAILED.
 const writeChunks = async ({ filePath, documentId, workspaceId }: { filePath: string, documentId: string, workspaceId: string; }): Promise<{ success: boolean; error: string | null; }> => {
     try {
         const { text } = await parsePdfText(filePath);
@@ -43,12 +57,13 @@ const writeChunks = async ({ filePath, documentId, workspaceId }: { filePath: st
             overlapChars: 300,
         });
         if (chunks.length === 0) {
-            // for ex. if its a screenshot
+            // Happens when the PDF contains only images with no extractable text (e.g. scanned pages)
             return { success: false, error: SiteContent.textExtractionError };
         }
 
         const embeddings = await createEmbeddings(chunks);
 
+        // Sanity check: the API must return exactly one embedding per input chunk
         if (embeddings.length !== chunks.length) {
             console.error("Embedding/chunk count mismatch", {
                 workspaceId,
@@ -58,6 +73,7 @@ const writeChunks = async ({ filePath, documentId, workspaceId }: { filePath: st
             return { success: false, error: SiteContent.documentUploadError };
         }
 
+        // text-embedding-3-small always returns 1536-dimensional vectors
         const expectedDimensions = 1536;
 
         await prisma.$transaction(async (tx) => {
@@ -68,6 +84,7 @@ const writeChunks = async ({ filePath, documentId, workspaceId }: { filePath: st
                     throw new Error(`Invalid embedding dimensions: expected ${expectedDimensions}, got ${embedding.length}`);
                 }
 
+                // Format the array as a pgvector literal so Postgres can cast it with ::vector
                 const vector = `[${embedding.join(",")}]`;
 
                 await tx.$executeRaw`
@@ -105,6 +122,14 @@ const writeChunks = async ({ filePath, documentId, workspaceId }: { filePath: st
     }
 };
 
+// Server action that handles the full document ingestion pipeline:
+//   1. Validate the uploaded file (must be a non-empty PDF belonging to the current workspace)
+//   2. Persist the file to disk under uploads/<workspaceId>/
+//   3. Create a Document record with status PROCESSING
+//   4. Parse, chunk, and embed the document via writeChunks
+//   5. On success → mark the document INDEXED and revalidate the workspace page
+//   6. On any failure → mark the document FAILED, store the error message, and
+//      delete the uploaded file to avoid orphaned files on disk
 export const uploadDocument = async (formData: FormData): Promise<Result<null>> => {
     const workspaceId = String(formData.get("workspaceId") || "");
     const file = formData.get("file");

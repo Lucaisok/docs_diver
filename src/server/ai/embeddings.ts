@@ -13,6 +13,11 @@ export const createEmbedding = async (input: string) => {
     return response.data[0].embedding;
 };
 
+// Converts an array of text strings into embedding vectors using OpenAI's
+// text-embedding-3-small model (1536 dimensions). Inputs are processed in
+// batches of 64 to stay within API limits. The response items are sorted by
+// their original index before being collected, because the API does not
+// guarantee order when batching.
 export const createEmbeddings = async (inputs: string[]) => {
     if (inputs.length === 0) {
         return [];
@@ -29,6 +34,7 @@ export const createEmbeddings = async (inputs: string[]) => {
             input: batch,
         });
 
+        // Sort by index to restore original order — the API may return items out of order
         const batchEmbeddings = response.data
             .slice()
             .sort((left, right) => left.index - right.index)
