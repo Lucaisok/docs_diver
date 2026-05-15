@@ -64,14 +64,15 @@ model Document {
 }
 
 model DocumentChunk {
-  id          String   @id @default(uuid())
+  id          String                 @id @default(uuid())
   documentId  String
   workspaceId String
   content     String
   pageNumber  Int?
   chunkIndex  Int
+  embedding   Unsupported("vector")?
   tokenCount  Int?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime               @default(now())
 
   document  Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
