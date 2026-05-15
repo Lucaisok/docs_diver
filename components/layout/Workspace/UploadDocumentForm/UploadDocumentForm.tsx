@@ -1,7 +1,7 @@
 "use client";
 import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
-import { uploadDocument } from "@/src/server/actions/documents";
+import { uploadDocument } from "@/src/server/actions/uploadDocument";
 import { useState } from "react";
 import styles from "./uploadDocumentForm.module.css";
 import { SiteContent } from "@/src/lib/content";

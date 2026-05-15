@@ -1,26 +1,41 @@
 import { Prisma } from "@prisma/client";
 export type { Result } from "@/src/types/result";
 
-export type WorkspaceListItem = Prisma.WorkspaceGetPayload<{
+export const workspaceListItemArgs = Prisma.validator<Prisma.WorkspaceDefaultArgs>()({
     include: {
         _count: {
             select: {
-                documents: true;
-            };
-        };
-    };
-}>;
+                documents: true,
+            },
+        },
+    },
+});
 
-export type WorkspaceDocument = Prisma.DocumentGetPayload<Record<string, never>>;
+export type WorkspaceListItem = Prisma.WorkspaceGetPayload<typeof workspaceListItemArgs>;
 
-export type WorkspaceDetails = Prisma.WorkspaceGetPayload<{
+export const workspaceDetailsArgs = Prisma.validator<Prisma.WorkspaceDefaultArgs>()({
     include: {
-        documents: true;
+        documents: {
+            orderBy: {
+                createdAt: "desc",
+            },
+            include: {
+                _count: {
+                    select: {
+                        chunks: true,
+                    },
+                },
+            },
+        },
         _count: {
             select: {
-                documents: true;
-                chats: true;
-            };
-        };
-    };
-}>;
+                documents: true,
+                chats: true,
+            },
+        },
+    },
+});
+
+export type WorkspaceDetails = Prisma.WorkspaceGetPayload<typeof workspaceDetailsArgs>;
+
+export type WorkspaceDocument = WorkspaceDetails["documents"][number];

@@ -1,7 +1,7 @@
 import { SiteContent } from "@/src/lib/content";
 import { prisma } from "@/src/lib/prisma";
 import { Result } from "@/src/types/result";
-import { WorkspaceDetails, WorkspaceListItem } from "@/src/types/workspace";
+import { WorkspaceDetails, WorkspaceListItem, workspaceDetailsArgs, workspaceListItemArgs } from "@/src/types/workspace";
 
 export type Workspaces = WorkspaceListItem[];
 
@@ -21,13 +21,7 @@ export const getWorkspacesByUserId = async (userId: string): Promise<GetWorkspac
             where: {
                 userId,
             },
-            include: {
-                _count: {
-                    select: {
-                        documents: true,
-                    },
-                },
-            },
+            ...workspaceListItemArgs,
             orderBy: {
                 updatedAt: "desc",
             },
@@ -74,19 +68,7 @@ export const getWorkspaceById = async (workspaceId: string, userId: string): Pro
                 id: workspaceId,
                 userId,
             },
-            include: {
-                documents: {
-                    orderBy: {
-                        createdAt: "desc",
-                    },
-                },
-                _count: {
-                    select: {
-                        documents: true,
-                        chats: true,
-                    },
-                },
-            },
+            ...workspaceDetailsArgs,
         });
         return {
             success: workspace !== null,

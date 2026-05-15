@@ -28,7 +28,7 @@ export const DocumentsSection = ({ documents, openModal }: DocumentsSectionProps
                     >
                         <p className={styles.documentName}>{document.name}</p>
                         <p className={styles.documentMeta}>
-                            {SiteContent.status}: {document.status.toLowerCase()}
+                            {SiteContent.status}: {document.status.toLowerCase()} | {document._count.chunks} {SiteContent.chunks}
                         </p>
                     </div>
                 ))}

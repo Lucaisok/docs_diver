@@ -34,5 +34,7 @@ export const SiteContent = {
     noPDFError: "PDF file is required",
     wrongFileTypeError: "Only PDF files are supported",
     uploadPDFDescription: "Upload a PDF to index it in this workspace and start asking grounded questions.",
-    uploading: "Uploading..."
+    uploading: "Uploading...",
+    textExtractionError: "No text could be extracted from this PDF",
+    chunks: "chunks"
 };
