@@ -1,4 +1,5 @@
 "use server";
+import { randomUUID } from "crypto";
 import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
 import { revalidatePath } from "next/cache";
@@ -8,6 +9,7 @@ import { SiteContent } from "@/src/lib/content";
 import { Result } from "@/src/types/result";
 import { parsePdfText } from "../documents/parse-pdf";
 import { chunkText } from "../documents/chunk-text";
+import { createEmbeddings } from "../ai/embeddings";
 
 const deleteFileIfPresent = async (filePath: string | undefined) => {
     if (filePath) {
@@ -41,18 +43,60 @@ const writeChunks = async ({ filePath, documentId, workspaceId }: { filePath: st
             overlapChars: 300,
         });
         if (chunks.length === 0) {
-            // for ex. if its a screenshot, so delete file here
+            // for ex. if its a screenshot
             return { success: false, error: SiteContent.textExtractionError };
         }
-        await prisma.documentChunk.createMany({
-            data: chunks.map((chunk, index) => ({
-                documentId: documentId,
+
+        const embeddings = await createEmbeddings(chunks);
+
+        if (embeddings.length !== chunks.length) {
+            console.error("Embedding/chunk count mismatch", {
                 workspaceId,
-                content: chunk,
-                chunkIndex: index,
-                tokenCount: Math.ceil(chunk.length / 4),
-            })),
+                chunks: chunks.length,
+                embeddings: embeddings.length,
+            });
+            return { success: false, error: SiteContent.documentUploadError };
+        }
+
+        const expectedDimensions = 1536;
+
+        await prisma.$transaction(async (tx) => {
+            for (const [index, chunk] of chunks.entries()) {
+                const embedding = embeddings[index];
+
+                if (embedding.length !== expectedDimensions) {
+                    throw new Error(`Invalid embedding dimensions: expected ${expectedDimensions}, got ${embedding.length}`);
+                }
+
+                const vector = `[${embedding.join(",")}]`;
+
+                await tx.$executeRaw`
+                    INSERT INTO "DocumentChunk"
+                    (
+                        id,
+                        "documentId",
+                        "workspaceId",
+                        content,
+                        "chunkIndex",
+                        "tokenCount",
+                        embedding,
+                        "createdAt"
+                    )
+                    VALUES
+                    (
+                        ${randomUUID()},
+                        ${documentId},
+                        ${workspaceId},
+                        ${chunk},
+                        ${index},
+                        ${Math.ceil(chunk.length / 4)},
+                        ${vector}::vector,
+                        NOW()
+                    )
+                `;
+            }
         });
+
         return { success: true, error: null };
 
     } catch (error) {
