@@ -36,5 +36,9 @@ export const SiteContent = {
     uploadPDFDescription: "Upload a PDF to index it in this workspace and start asking grounded questions.",
     uploading: "Uploading...",
     textExtractionError: "No text could be extracted from this PDF",
-    chunks: "chunks"
+    chunks: "chunks",
+    provideQuestion: "Please provide a question.",
+    noInfoRetrieved: "I could not find relevant information in the uploaded documents.",
+    noResponseFromModel: "The model returned an empty response. Please try again.",
+    questionProcessingError: "An error occurred while processing your question. Please try again."
 };

@@ -4,6 +4,7 @@ export const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+//simplified version, unused.
 export const createEmbedding = async (input: string) => {
     const response = await openai.embeddings.create({
         model: "text-embedding-3-small",
