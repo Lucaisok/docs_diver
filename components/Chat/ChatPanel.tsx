@@ -18,14 +18,16 @@ export function ChatPanel({ workspaceId, initialMessages, messagesError }: ChatP
     const [input, setInput] = useState("");
 
     const { messages, sendMessage, status } = useChat({
-        id: workspaceId, // stable chat state key per workspace
-        messages: initialMessages,
+        id: workspaceId,
         transport: new DefaultChatTransport({
             api: "/api/chat",
             body: { workspaceId },
         }),
     });
 
+    // Combine initial DB messages with useChat messages
+    const allMessages = [...initialMessages, ...messages];
+    const displayMessages = allMessages.length > 0 ? allMessages : initialMessages;
     const isLoading = status === "submitted" || status === "streaming";
 
     const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -49,7 +51,7 @@ export function ChatPanel({ workspaceId, initialMessages, messagesError }: ChatP
                 </p>
             ) : null}
             <div className={styles.messagesArea}>
-                {messages.length === 0 ? (
+                {displayMessages.length === 0 ? (
                     <div className={styles.emptyState}>
                         <p className={styles.emptyStateTitle}>{SiteContent.firstQuestion}</p>
                         <p className={styles.emptyStateDescription}>
@@ -57,7 +59,7 @@ export function ChatPanel({ workspaceId, initialMessages, messagesError }: ChatP
                         </p>
                     </div>
                 ) : (
-                    messages.map((message) => (
+                    displayMessages.map((message) => (
                         <div key={message.id} className={styles.messageCard}>
                             <p className={styles.messageRole}>
                                 {message.role}
