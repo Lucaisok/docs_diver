@@ -4,23 +4,35 @@ import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { WorkspaceShell } from "../WorkspaceShell/WorkspaceShell";
 import { notFound } from "next/navigation";
 import { SiteContent } from "@/src/lib/content";
+import { getMessagesByWorkspace } from "@/src/server/queries/messages";
+import { UIMessage } from "ai";
 
 type WrapperProps = {
     workspaceId: string;
 };
 
 export const Wrapper = async ({ workspaceId }: WrapperProps) => {
-    const result = await getWorkspaceById(workspaceId, DEV_USER_ID);
+    const [workspaceResult, messagesResult] = await Promise.all([
+        getWorkspaceById(workspaceId, DEV_USER_ID),
+        getMessagesByWorkspace(workspaceId, DEV_USER_ID),
+    ]);
 
-    if (result.error === SiteContent.workspaceNotFoundError) {
+    if (workspaceResult.error === SiteContent.workspaceNotFoundError) {
         notFound();
     }
 
-    if (result.error || !result.data || !result.success) {
-        return <p className={styles.error}>{result.error}</p>;
+    if (workspaceResult.error || !workspaceResult.data || !workspaceResult.success) {
+        return <p className={styles.error}>{workspaceResult.error}</p>;
     }
 
-    const workspace = result.data;
+    const workspace = workspaceResult.data;
+    const initialMessages: UIMessage[] = (messagesResult.success ? messagesResult.data : []).map(
+        (message) => ({
+            id: message.id,
+            role: message.role === "USER" ? "user" : "assistant",
+            parts: [{ type: "text", text: message.content }],
+        }),
+    );
 
-    return <WorkspaceShell workspace={workspace} workspaceId={workspaceId} />;
+    return <WorkspaceShell workspace={workspace} workspaceId={workspaceId} initialMessages={initialMessages} messagesError={messagesResult.error} />;
 };
