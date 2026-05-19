@@ -20,7 +20,7 @@ export const MessagesArea = ({ displayMessages, isLoading }: MessagesAreaProps) 
 
     return (
         <div className={styles.messagesArea}>
-            <div ref={transcriptRef} className={styles.transcript}>
+            <div ref={transcriptRef} className={`${styles.transcript} ${displayMessages.length > 0 ? styles.transcriptMasked : ""}`}>
                 {displayMessages.length === 0 ? (
                     <div className={styles.emptyState}>
                         <p className={styles.emptyStateTitle}>{SiteContent.firstQuestion}</p>

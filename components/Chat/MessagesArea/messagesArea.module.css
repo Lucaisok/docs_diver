@@ -15,6 +15,9 @@
     gap: var(--spacing-sm);
     overflow-y: auto;
     padding: var(--spacing-md) 0;
+}
+
+.transcriptMasked {
     mask-image: linear-gradient(to bottom, transparent 0%, black 4rem);
 }
 
