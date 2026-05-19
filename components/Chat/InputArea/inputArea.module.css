@@ -1,0 +1,10 @@
+.form {
+    display: flex;
+    gap: var(--spacing-sm);
+    border-top: 1px solid var(--color-border-dark);
+    padding: var(--spacing-md);
+}
+
+.input {
+    flex: 1;
+}

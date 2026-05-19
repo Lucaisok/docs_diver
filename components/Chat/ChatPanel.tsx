@@ -1,12 +1,12 @@
 "use client";
-
 import { useState, type FormEvent } from "react";
 import { useChat } from "@ai-sdk/react";
-import Input from "../Input/Input";
-import Button from "../Button/Button";
 import { DefaultChatTransport, UIMessage } from "ai";
 import styles from "./ChatPanel.module.css";
 import { SiteContent } from "@/src/lib/content";
+import { MessagesArea } from "./MessagesArea/MessagesArea";
+import { InputArea } from "./InputArea/InputArea";
+import { ErrorArea } from "./ErrorArea/ErrorArea";
 
 type ChatPanelProps = {
     workspaceId: string;
@@ -15,7 +15,7 @@ type ChatPanelProps = {
 };
 
 export function ChatPanel({ workspaceId, initialMessages, messagesError }: ChatPanelProps) {
-    const [input, setInput] = useState("");
+    const [chatError, setChatError] = useState<string | null>(null);
 
     const { messages, sendMessage, status } = useChat({
         id: workspaceId,
@@ -23,71 +23,24 @@ export function ChatPanel({ workspaceId, initialMessages, messagesError }: ChatP
             api: "/api/chat",
             body: { workspaceId },
         }),
+        onError: (error) => {
+            console.error("Chat error:", error);
+            setChatError(SiteContent.chatError);
+        },
     });
 
-    // Combine initial DB messages with useChat messages
     const allMessages = [...initialMessages, ...messages];
     const displayMessages = allMessages.length > 0 ? allMessages : initialMessages;
     const isLoading = status === "submitted" || status === "streaming";
 
-    const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const value = input.trim();
-
-        if (!value || isLoading) {
-            return;
-        }
-
-        sendMessage({ text: value });
-        setInput("");
-    };
+    const send = (value: { text: string; }) => sendMessage(value);
+    const cleanInputError = () => setChatError(null);
 
     return (
         <div className={styles.panel}>
-            {messagesError ? (
-                <p className={styles.warning}>
-                    {SiteContent.messagesLoadWarning}
-                </p>
-            ) : null}
-            <div className={styles.messagesArea}>
-                {displayMessages.length === 0 ? (
-                    <div className={styles.emptyState}>
-                        <p className={styles.emptyStateTitle}>{SiteContent.firstQuestion}</p>
-                        <p className={styles.emptyStateDescription}>
-                            {SiteContent.promptDescription}
-                        </p>
-                    </div>
-                ) : (
-                    displayMessages.map((message) => (
-                        <div key={message.id} className={styles.messageCard}>
-                            <p className={styles.messageRole}>
-                                {message.role}
-                            </p>
-
-                            {message.parts?.map((part, index) =>
-                                part.type === "text" ? (
-                                    <p key={index} className={styles.messageText}>
-                                        {part.text}
-                                    </p>
-                                ) : null
-                            )}
-                        </div>
-                    ))
-                )}
-            </div>
-
-            <form onSubmit={handleFormSubmit} className={styles.form}>
-                <Input
-                    className={styles.input}
-                    value={input}
-                    onChange={(event) => setInput(event.target.value)}
-                    placeholder={SiteContent.questionPlaceholder}
-                />
-                <Button type="submit" disabled={isLoading}>
-                    {isLoading ? SiteContent.thinking : SiteContent.ask}
-                </Button>
-            </form>
+            <ErrorArea chatError={chatError} messagesError={messagesError} />
+            <MessagesArea displayMessages={displayMessages} />
+            <InputArea send={send} cleanInputError={cleanInputError} isLoading={isLoading} />
         </div>
     );
 }
