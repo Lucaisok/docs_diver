@@ -6,6 +6,8 @@ import { unlink } from "fs/promises";
 import path from "path";
 import { SiteContent } from "@/src/lib/content";
 import { prisma } from "@/src/lib/prisma";
+import { DEV_USER_ID } from "@/src/lib/dev-user";
+import { RetrievedChunk, retrieveRelevantChunks } from "../ai/retrieval";
 
 export const getVectorFromEmbedding = (embedding: number[]) => `[${embedding.join(",")}]`;
 
@@ -141,3 +143,199 @@ CRITICAL RULES:
 - Always cite your sources using exact format: [Source N] where N is the source number.
 - Be concise and precise. Avoid speculation or external knowledge.
 - If sources conflict, mention both perspectives and cite each.`;
+
+/**
+ * Extract text content from a UIMessage
+ * UIMessage has a parts array with text parts
+ */
+export const extractMessageText = (message: any | undefined): string => {
+    if (!message) return "";
+
+    // Handle string content (from useChat)
+    if (typeof message.content === "string") {
+        return message.content;
+    }
+
+    // Handle parts array structure (from DB conversion)
+    if (message.parts && Array.isArray(message.parts)) {
+        return message.parts
+            .filter((part: any) => part.type === "text")
+            .map((part: any) => part.text)
+            .join("\n")
+            .trim();
+    }
+
+    return "";
+};
+
+type ParsedChatRequest =
+    | { ok: true; data: { messages: unknown[]; workspaceId: string; }; }
+    | { ok: false; response: Response; };
+export const parseAndValidateRequest = async (req: Request): Promise<ParsedChatRequest> => {
+    try {
+        const body = await req.json();
+        const { messages, workspaceId } = body;
+
+        if (!workspaceId || typeof workspaceId !== "string") {
+            return {
+                ok: false,
+                response: new Response(
+                    JSON.stringify({ error: SiteContent.invalidWorkspaceIdError }),
+                    { status: 400 },
+                ),
+            };
+        }
+        if (!Array.isArray(messages) || messages.length === 0) {
+            return {
+                ok: false,
+                response: new Response(JSON.stringify({ error: SiteContent.invalidMessagesArrayError }), {
+                    status: 400,
+                })
+            };
+        }
+
+        return { data: { messages, workspaceId }, ok: true };
+
+    } catch (error) {
+        console.error("Chat API error:", error);
+        return {
+            ok: false,
+            response: new Response(
+                JSON.stringify({
+                    error: error instanceof Error ? error.message : SiteContent.internalServerError,
+                }),
+                { status: 500 }
+            )
+        };
+    }
+};
+
+type WorkspaceAccessResult =
+    | { ok: true; }
+    | { ok: false; response: Response; };
+
+export const assertWorkspaceAccess = async (workspaceId: string): Promise<WorkspaceAccessResult> => {
+    try {
+        const workspace = await prisma.workspace.findUnique({
+            where: { id: workspaceId },
+        });
+
+        if (!workspace || workspace.userId !== DEV_USER_ID) {
+            return {
+                ok: false,
+                response: new Response(JSON.stringify({ error: SiteContent.workspaceUnauthorizedError }), {
+                    status: 404,
+                })
+            };
+        }
+
+        return { ok: true };
+    } catch (error) {
+        console.error("Chat API error:", error);
+        return {
+            ok: false,
+            response: new Response(
+                JSON.stringify({
+                    error: error instanceof Error ? error.message : SiteContent.internalServerError,
+                }),
+                { status: 500 }
+            )
+        };
+    }
+};
+
+type GetLastMessageContentResult =
+    | { ok: true; data: { messageContent: string; }; }
+    | { ok: false; response: Response; };
+
+export const getLastMessageContent = (messages: unknown[]): GetLastMessageContentResult => {
+    const lastUserMessage = messages[messages.length - 1] as any;
+    const messageContent = extractMessageText(lastUserMessage);
+    if (!messageContent) {
+        console.error("Failed to extract message content from:", lastUserMessage);
+        return {
+            ok: false,
+            response: new Response(JSON.stringify({ error: SiteContent.invalidMessageContentError }), {
+                status: 400,
+            })
+        };
+    }
+    return { ok: true, data: { messageContent } };
+};
+
+type SaveUserMessageResult =
+    | { ok: true; }
+    | { ok: false; response: Response; };
+
+export const saveUserMessage = async (workspaceId: string, messageContent: string): Promise<SaveUserMessageResult> => {
+    try {
+        await prisma.message.create({
+            data: {
+                workspaceId,
+                userId: DEV_USER_ID,
+                role: "USER",
+                content: messageContent,
+            },
+        });
+        return { ok: true };
+    } catch (error) {
+        console.error("Failed to save user message:", error);
+        return {
+            ok: false, response: new Response(JSON.stringify({ error: SiteContent.saveMessageError }), {
+                status: 500,
+            })
+        };
+    }
+};
+
+export const getChunks = async (workspaceId: string, messageContent: string) => {
+    let chunks: RetrievedChunk[] = [];
+    try {
+        chunks = await retrieveRelevantChunks({
+            workspaceId,
+            query: messageContent,
+            limit: 6,
+            minSimilarity: 0.2,
+        });
+    } catch (error) {
+        console.error("Failed to retrieve relevant chunks:", error);
+        // Continue without context rather than failing
+    } finally {
+        return chunks;
+    }
+};
+
+export const buildMessageAndHistory = (chunks: RetrievedChunk[], messages: unknown[], messageContent: string) => {
+    const context = chunks
+        .map(
+            (chunk, index) => `[Source ${index + 1}] Document: ${chunk.documentName} Chunk: ${chunk.chunkIndex} Content: ${chunk.content}`
+        )
+        .join("\n\n");
+
+    // Build messages for LLM - use convertToModelMessages to properly format history
+    const modelMessages = messages.slice(0, -1).map((msg: any) => ({
+        role: msg.role,
+        content: extractMessageText(msg),
+    }));
+
+    // Build the user message with context
+    const userMessageContent = `Context: ${context || "No relevant context found."} Question: ${messageContent}`.trim();
+
+    return { history: modelMessages, messageWithContext: userMessageContent };
+};
+
+export const saveModelAnswer = async (workspaceId: string, text: string) => {
+    try {
+        await prisma.message.create({
+            data: {
+                workspaceId,
+                userId: DEV_USER_ID,
+                role: "ASSISTANT",
+                content: text,
+            },
+        });
+    } catch (error) {
+        console.error("Failed to save assistant message:", error);
+        // Note: Can't send error to client here as stream already started
+    }
+};
