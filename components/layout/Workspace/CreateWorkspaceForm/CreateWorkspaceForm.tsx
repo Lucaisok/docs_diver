@@ -10,12 +10,11 @@ export const CreateWorkspaceForm = () => {
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (formData: FormData) => {
-        const result = await createWorkspace(formData);
+        try {
+            await createWorkspace(formData);
 
-        if (result.success) {
-            setError(null);
-        } else {
-            setError(result.error);
+        } catch (error) {
+            setError(SiteContent.workspaceCreationError);
         }
     };
 

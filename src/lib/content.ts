@@ -40,5 +40,10 @@ export const SiteContent = {
     provideQuestion: "Please provide a question.",
     noInfoRetrieved: "I could not find relevant information in the uploaded documents.",
     noResponseFromModel: "The model returned an empty response. Please try again.",
-    questionProcessingError: "An error occurred while processing your question. Please try again."
+    questionProcessingError: "An error occurred while processing your question. Please try again.",
+    getChatsError: "Unable to load chats right now. Please try again.",
+    chatNotFoundError: "Chat not found.",
+    chatCreationError: "Unable to create chat right now. Please try again.",
+
+
 };

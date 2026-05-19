@@ -41,7 +41,7 @@ model Workspace {
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   documents Document[]
   chunks    DocumentChunk[]
-  chats     Chat[]
+  chat      Chat?
 
   @@unique([userId, name])
 }
@@ -89,6 +89,8 @@ model Chat {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   messages  Message[]
+
+  @@unique([workspaceId])
 }
 
 model Message {

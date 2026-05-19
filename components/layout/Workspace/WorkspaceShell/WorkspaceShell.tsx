@@ -18,9 +18,9 @@ export const WorkspaceShell = ({ workspace, workspaceId }: WorkspaceShellProps) 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     return <>
-        <Hero workspaceName={workspace.name} documentsNumber={workspace._count.documents} chatsNumber={workspace._count.chats} openModal={() => setIsModalVisible(true)} />
+        <Hero workspaceName={workspace.name} documentsNumber={workspace._count.documents} openModal={() => setIsModalVisible(true)} />
         <div className={styles.layout}>
-            <ChatSection />
+            <ChatSection workspaceId={workspaceId} />
             <DocumentsSection documents={workspace.documents} openModal={() => setIsModalVisible(true)} />
         </div>
         <Modal

@@ -11,8 +11,6 @@ export const workspaceListItemArgs = Prisma.validator<Prisma.WorkspaceDefaultArg
     },
 });
 
-export type WorkspaceListItem = Prisma.WorkspaceGetPayload<typeof workspaceListItemArgs>;
-
 export const workspaceDetailsArgs = Prisma.validator<Prisma.WorkspaceDefaultArgs>()({
     include: {
         documents: {
@@ -30,12 +28,12 @@ export const workspaceDetailsArgs = Prisma.validator<Prisma.WorkspaceDefaultArgs
         _count: {
             select: {
                 documents: true,
-                chats: true,
             },
         },
     },
 });
 
+export type WorkspaceListItem = Prisma.WorkspaceGetPayload<typeof workspaceListItemArgs>;
 export type WorkspaceDetails = Prisma.WorkspaceGetPayload<typeof workspaceDetailsArgs>;
-
 export type WorkspaceDocument = WorkspaceDetails["documents"][number];
+export type Workspaces = WorkspaceListItem[];

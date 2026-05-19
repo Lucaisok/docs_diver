@@ -1,21 +1,11 @@
 import { SiteContent } from "@/src/lib/content";
 import { prisma } from "@/src/lib/prisma";
 import { Result } from "@/src/types/result";
-import { WorkspaceDetails, WorkspaceListItem, workspaceDetailsArgs, workspaceListItemArgs } from "@/src/types/workspace";
-
-export type Workspaces = WorkspaceListItem[];
+import { WorkspaceDetails, Workspaces, workspaceDetailsArgs, workspaceListItemArgs } from "@/src/types/workspace";
 
 export type GetWorkspacesByUserIdResult = Result<Workspaces>;
 
 export const getWorkspacesByUserId = async (userId: string): Promise<GetWorkspacesByUserIdResult> => {
-    if (!userId) {
-        return {
-            success: false,
-            data: [],
-            error: SiteContent.noUserIdError,
-        };
-    }
-
     try {
         const workspaces = await prisma.workspace.findMany({
             where: {
@@ -43,25 +33,9 @@ export const getWorkspacesByUserId = async (userId: string): Promise<GetWorkspac
 };
 
 
-export type WorkspaceWithDocuments = WorkspaceDetails;
-
-export type GetWorkspaceByIdResult = Result<WorkspaceWithDocuments | null>;
+export type GetWorkspaceByIdResult = Result<WorkspaceDetails | null>;
 
 export const getWorkspaceById = async (workspaceId: string, userId: string): Promise<GetWorkspaceByIdResult> => {
-    if (!userId) {
-        return {
-            success: false,
-            data: null,
-            error: SiteContent.noUserIdError,
-        };
-    }
-    if (!workspaceId) {
-        return {
-            success: false,
-            data: null,
-            error: SiteContent.noWorkspaceIdError,
-        };
-    }
     try {
         const workspace = await prisma.workspace.findFirst({
             where: {
