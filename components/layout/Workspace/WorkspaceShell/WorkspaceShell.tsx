@@ -23,7 +23,12 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
     return <>
         <Hero workspaceName={workspace.name} documentsNumber={workspace._count.documents} openModal={() => setIsModalVisible(true)} />
         <div className={styles.layout}>
-            <ChatSection workspaceId={workspaceId} initialMessages={initialMessages} messagesError={messagesError} />
+            <ChatSection
+                workspaceId={workspaceId}
+                hasDocuments={workspace._count.documents > 0}
+                initialMessages={initialMessages}
+                messagesError={messagesError}
+            />
             <DocumentsSection documents={workspace.documents} openModal={() => setIsModalVisible(true)} />
         </div>
         <Modal

@@ -1,4 +1,25 @@
+.documentsCard {
+    height: 36rem;
+    min-height: 0;
+}
+
+@media (min-width: 1024px) {
+    .documentsCard {
+        height: calc(100dvh - 16rem);
+        max-height: 48rem;
+    }
+}
+
+.documentsBody {
+    display: flex;
+    width: 100%;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+}
+
 .emptyState {
+    width: 100%;
     border-radius: var(--border-radius-lg);
     border: 1px dashed var(--color-border-dark);
     padding: var(--spacing-xl);
@@ -16,15 +37,18 @@
     font-size: var(--font-size-sm);
 }
 
-.cta {
-    margin-top: var(--spacing-lg);
-    width: 100%;
-}
-
 .documentsList {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
+}
+
+.footerButton {
+    width: 100%;
 }
 
 .documentRow {

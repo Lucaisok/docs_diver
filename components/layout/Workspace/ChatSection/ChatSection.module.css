@@ -1,6 +1,22 @@
+.chatCard {
+    height: 36rem;
+    min-height: 0;
+}
+
+@media (min-width: 1024px) {
+    .chatCard {
+        height: calc(100dvh - 16rem);
+        max-height: 48rem;
+    }
+}
+
 .content {
+    display: flex;
     flex: 1;
-    padding: var(--spacing-xl);
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
 }
 
 .promptBox {

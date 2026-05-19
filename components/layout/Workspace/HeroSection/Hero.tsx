@@ -14,15 +14,10 @@ export const Hero = ({ workspaceName, documentsNumber, openModal }: HeroProps) =
             <h1 className={styles.title}>
                 {workspaceName}
             </h1>
-            <p className={styles.subtitle}>
-                {documentsNumber} {SiteContent.documents}
-            </p>
             <p className={styles.description}>
                 {SiteContent.askQuestions}
             </p>
         </div>
-
-        <Button onClick={openModal}>{SiteContent.uploadPDF}</Button>
     </div>;
 
 };

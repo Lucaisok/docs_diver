@@ -1,4 +1,6 @@
 .card {
+    display: flex;
+    flex-direction: column;
     background-color: var(--color-surface);
     border: 1px solid var(--color-border-dark);
     border-radius: var(--border-radius-lg);
@@ -17,6 +19,9 @@
 }
 
 .body {
+    display: flex;
+    min-height: 0;
+    flex: 1;
     color: var(--color-text-muted);
     font-size: var(--font-size-md);
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import styles from "./ChatPanel.module.css";
@@ -10,11 +10,12 @@ import { ErrorArea } from "./ErrorArea/ErrorArea";
 
 type ChatPanelProps = {
     workspaceId: string;
+    hasDocuments: boolean;
     initialMessages: UIMessage[];
     messagesError?: string | null;
 };
 
-export function ChatPanel({ workspaceId, initialMessages, messagesError }: ChatPanelProps) {
+export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messagesError }: ChatPanelProps) {
     const [chatError, setChatError] = useState<string | null>(null);
 
     const { messages, sendMessage, status } = useChat({
@@ -39,8 +40,13 @@ export function ChatPanel({ workspaceId, initialMessages, messagesError }: ChatP
     return (
         <div className={styles.panel}>
             <ErrorArea chatError={chatError} messagesError={messagesError} />
-            <MessagesArea displayMessages={displayMessages} />
-            <InputArea send={send} cleanInputError={cleanInputError} isLoading={isLoading} />
+            <MessagesArea displayMessages={displayMessages} isLoading={isLoading} />
+            <InputArea
+                send={send}
+                cleanInputError={cleanInputError}
+                isLoading={isLoading}
+                isDisabled={!hasDocuments}
+            />
         </div>
     );
 }

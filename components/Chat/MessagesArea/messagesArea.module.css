@@ -1,18 +1,29 @@
 .messagesArea {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--spacing-xl);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    /* padding: var(--spacing-xl); */
+}
+
+.transcript {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    overflow-y: auto;
+    padding: var(--spacing-md) 0;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 4rem);
 }
 
 .emptyState {
+    width: 100%;
     border-radius: var(--border-radius-lg);
-    border: 1px solid var(--color-border-dark);
-    background-color: color-mix(in srgb, var(--color-surface) 60%, var(--color-bg));
-    padding: var(--spacing-md);
-    font-size: var(--font-size-sm);
+    border: 1px dashed var(--color-border-dark);
+    padding: var(--spacing-xl);
+    text-align: center;
 }
 
 .emptyStateTitle {
@@ -21,27 +32,67 @@
 }
 
 .emptyStateDescription {
-    margin-top: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
     color: var(--color-text-muted);
 }
 
-.messageCard {
-    border-radius: var(--border-radius-lg);
-    border: 1px solid var(--color-border-dark);
-    background-color: color-mix(in srgb, var(--color-surface) 70%, var(--color-bg));
-    padding: var(--spacing-md);
+.messageRow {
+    display: flex;
+    width: 100%;
+    padding: 0;
 }
 
-.messageRole {
-    margin-bottom: var(--spacing-xs);
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    font-size: var(--font-size-xs);
-    letter-spacing: 0.03em;
+.userMessageRow {
+    justify-content: flex-end;
+}
+
+.assistantMessageRow {
+    justify-content: flex-start;
 }
 
 .messageText {
+    max-width: min(42rem, 85%);
+    margin: 0;
+    padding: 0.25rem 0;
+    line-height: 1.75;
     white-space: pre-wrap;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-md);
     color: var(--color-text-primary);
+}
+
+.userMessageText {
+    margin-left: auto;
+    padding-inline-end: 1rem;
+    border-inline-end: 2px solid color-mix(in srgb, var(--color-text-muted) 48%, var(--color-bg));
+    color: color-mix(in srgb, var(--color-text-primary) 88%, var(--color-bg));
+}
+
+.assistantMessageText {
+    margin-right: auto;
+    padding-inline-start: 1rem;
+    border-inline-start: 2px solid color-mix(in srgb, var(--color-white) 66%, var(--color-bg));
+    color: color-mix(in srgb, var(--color-text-primary) 98%, var(--color-bg));
+}
+
+.loadingState {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-right: auto;
+    padding: 0.25rem 0 0.25rem 1rem;
+    border-inline-start: 2px solid color-mix(in srgb, var(--color-white) 66%, var(--color-bg));
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.loadingIcon {
+    width: 0.9rem;
+    height: 0.9rem;
+    animation: loadingSpin 1s linear infinite;
+}
+
+@keyframes loadingSpin {
+    to {
+        transform: rotate(360deg);
+    }
 }

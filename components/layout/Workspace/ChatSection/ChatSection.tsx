@@ -5,14 +5,20 @@ import { UIMessage } from "ai";
 
 interface ChatSectionProps {
     workspaceId: string;
+    hasDocuments: boolean;
     initialMessages: UIMessage[];
     messagesError?: string | null;
 }
 
-export const ChatSection = ({ workspaceId, initialMessages, messagesError }: ChatSectionProps) => {
-    return <Card title={""}>
+export const ChatSection = ({ workspaceId, hasDocuments, initialMessages, messagesError }: ChatSectionProps) => {
+    return <Card title={"Chat Assistant"} className={styles.chatCard}>
         <div className={styles.content}>
-            <ChatPanel workspaceId={workspaceId} initialMessages={initialMessages} messagesError={messagesError} />
+            <ChatPanel
+                workspaceId={workspaceId}
+                hasDocuments={hasDocuments}
+                initialMessages={initialMessages}
+                messagesError={messagesError}
+            />
         </div>
     </Card>;
 };

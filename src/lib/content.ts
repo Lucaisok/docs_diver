@@ -11,7 +11,7 @@ export const SiteContent = {
     uploadPDF: "Upload PDF",
     chat: "Chat",
     chats: "Chats",
-    firstQuestion: "Ask your first question",
+    firstQuestion: "Upload a document to enable chat",
     questionPlaceholder: "Ask a question about your documents...",
     promptDescription: "Once documents are indexed, answers will include citations from your sources.",
     ask: "Ask",

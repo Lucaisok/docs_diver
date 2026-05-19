@@ -7,11 +7,12 @@ import styles from "./inputArea.module.css";
 
 interface InputArea {
     cleanInputError: () => void;
+    isDisabled: boolean;
     isLoading: boolean;
     send: (value: { text: string; }) => void;
 }
 
-export const InputArea = ({ cleanInputError, send, isLoading }: InputArea) => {
+export const InputArea = ({ cleanInputError, send, isDisabled, isLoading }: InputArea) => {
     const [input, setInput] = useState("");
 
     // Clear error when user starts typing
@@ -25,7 +26,7 @@ export const InputArea = ({ cleanInputError, send, isLoading }: InputArea) => {
 
         const value = input.trim();
 
-        if (!value || isLoading) {
+        if (!value || isLoading || isDisabled) {
             return;
         }
 
@@ -39,8 +40,8 @@ export const InputArea = ({ cleanInputError, send, isLoading }: InputArea) => {
             onChange={(event) => handleInputChange(event.target.value)}
             placeholder={SiteContent.questionPlaceholder}
         />
-        <Button type="submit" disabled={isLoading}>
-            {isLoading ? SiteContent.thinking : SiteContent.ask}
+        <Button type="submit" disabled={isLoading || isDisabled}>
+            {SiteContent.ask}
         </Button>
     </form>;
 };

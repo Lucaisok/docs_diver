@@ -11,28 +11,33 @@ interface DocumentsSectionProps {
 
 export const DocumentsSection = ({ documents, openModal }: DocumentsSectionProps) => {
     const hasDocuments = documents.length > 0;
-    return <Card title={SiteContent.documents}>
-        {!hasDocuments ?
-            <div className={styles.emptyState}>
-                <p className={styles.title}>{SiteContent.noDocumentsTitle}</p>
-                <p className={styles.description}>
-                    {SiteContent.noDocumentsDescription}
-                </p>
-                <Button className={styles.cta} onClick={openModal}>{SiteContent.uploadPDF}</Button>
-            </div>
-            : <div className={styles.documentsList}>
-                {documents.map((document) => (
-                    <div
-                        key={document.id}
-                        className={styles.documentRow}
-                    >
-                        <p className={styles.documentName}>{document.name}</p>
-                        <p className={styles.documentMeta}>
-                            {SiteContent.status}: {document.status.toLowerCase()} | {document._count.chunks} {SiteContent.chunks}
-                        </p>
-                    </div>
-                ))}
-            </div>
-        }
+    return <Card
+        title={SiteContent.documents}
+        className={styles.documentsCard}
+        footer={<Button className={styles.footerButton} onClick={openModal}>{SiteContent.uploadPDF}</Button>}
+    >
+        <div className={styles.documentsBody}>
+            {!hasDocuments ?
+                <div className={styles.emptyState}>
+                    <p className={styles.title}>{SiteContent.noDocumentsTitle}</p>
+                    <p className={styles.description}>
+                        {SiteContent.noDocumentsDescription}
+                    </p>
+                </div>
+                : <div className={styles.documentsList}>
+                    {documents.map((document) => (
+                        <div
+                            key={document.id}
+                            className={styles.documentRow}
+                        >
+                            <p className={styles.documentName}>{document.name}</p>
+                            <p className={styles.documentMeta}>
+                                {SiteContent.status}: {document.status.toLowerCase()} | {document._count.chunks} {SiteContent.chunks}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            }
+        </div>
     </Card>;
 };
