@@ -1,6 +1,6 @@
 import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
-import { parseAndValidateRequest, systemPrompt, assertWorkspaceAccess, getLastMessageContent, saveUserMessage, getChunks, buildMessageAndHistory, saveModelAnswer, buildCitations } from "@/src/server/utils/utils";
+import { parseAndValidateRequest, systemPrompt, assertWorkspaceAccess, getLastMessageContent, saveUserMessage, getChunks, buildMessageAndHistory, saveModelAnswer, buildCitations as formatChunkAsCitations, selectBestChunks, filterUsedCitations } from "@/src/server/utils/utils";
 import { SiteContent } from "@/src/lib/content";
 
 export const runtime = "nodejs";
@@ -27,11 +27,13 @@ export async function POST(req: Request) {
 
         // Retrieve relevant document chunks for context
         const chunks = await getChunks(workspaceId, messageContent);
-
+        // Chunks selection strategy
+        const selectedChunks = selectBestChunks(chunks);
         //build message with context and format message history for model
-        const { history, messageWithContext } = buildMessageAndHistory(chunks, messages, messageContent);
+        const { history, messageWithContext } = buildMessageAndHistory(selectedChunks, messages, messageContent);
 
-        const citations = buildCitations(chunks);
+        const chunksAsCitations = formatChunkAsCitations(selectedChunks);
+        let streamedText = "";
 
         const result = streamText({
             model: openai("gpt-4o-mini"),
@@ -44,14 +46,19 @@ export async function POST(req: Request) {
                 },
             ],
             async onFinish({ text }) {
-                await saveModelAnswer(workspaceId, text, citations);
+                const usedCitations = filterUsedCitations(text || streamedText, chunksAsCitations);
+                await saveModelAnswer(workspaceId, text, usedCitations);
             },
         });
 
         return result.toUIMessageStreamResponse({
             messageMetadata: ({ part }) => {
+                if (part.type === "text-delta") {
+                    streamedText += part.text;
+                }
+
                 if (part.type === "finish") {
-                    return { citations };
+                    return { citations: filterUsedCitations(streamedText, chunksAsCitations) };
                 }
 
                 return undefined;

@@ -297,7 +297,7 @@ export const getChunks = async (workspaceId: string, messageContent: string) => 
             workspaceId,
             query: messageContent,
             limit: 6,
-            minSimilarity: 0.2,
+            minSimilarity: 0.35,
         });
     } catch (error) {
         console.error("Failed to retrieve relevant chunks:", error);
@@ -305,6 +305,40 @@ export const getChunks = async (workspaceId: string, messageContent: string) => 
     } finally {
         return chunks;
     }
+};
+
+type SelectChunksOptions = {
+    maxContextTokens?: number;
+    minSimilarity?: number;
+    maxChunks?: number;
+};
+
+export const selectBestChunks = (
+    chunks: RetrievedChunk[],
+    {
+        maxContextTokens = 3000,
+        minSimilarity = 0.35,
+        maxChunks = 6,
+    }: SelectChunksOptions = {}
+): RetrievedChunk[] => {
+    const selectedChunks: RetrievedChunk[] = [];
+    let totalTokens = 0;
+
+    for (const chunk of chunks) {
+        if (chunk.similarity < minSimilarity) continue;
+
+        const tokenCount =
+            chunk.tokenCount ?? Math.ceil(chunk.content.length / 4);
+
+        if (totalTokens + tokenCount > maxContextTokens) continue;
+
+        selectedChunks.push(chunk);
+        totalTokens += tokenCount;
+
+        if (selectedChunks.length >= maxChunks) break;
+    }
+
+    return selectedChunks;
 };
 
 export const buildMessageAndHistory = (chunks: RetrievedChunk[], messages: unknown[], messageContent: string) => {
@@ -334,6 +368,35 @@ export const buildCitations = (chunks: RetrievedChunk[]): Citation[] => (chunks.
     excerpt: chunk.content.slice(0, 300),
     similarity: chunk.similarity,
 })));
+
+export const filterUsedCitations = (answerText: string, citations: Citation[]): Citation[] => {
+    if (!answerText || citations.length === 0) {
+        return [];
+    }
+
+    const usedSourceNumbersInOrder: number[] = [];
+    const seen = new Set<number>();
+    const sourcePattern = /\[\s*source\s+(\d+)\s*\]/gi;
+
+    for (const match of answerText.matchAll(sourcePattern)) {
+        const sourceNumber = Number(match[1]);
+
+        if (!Number.isInteger(sourceNumber) || seen.has(sourceNumber)) {
+            continue;
+        }
+
+        seen.add(sourceNumber);
+        usedSourceNumbersInOrder.push(sourceNumber);
+    }
+
+    if (usedSourceNumbersInOrder.length === 0) {
+        return [];
+    }
+
+    return usedSourceNumbersInOrder
+        .map((sourceNumber) => citations.find((citation) => citation.sourceNumber === sourceNumber))
+        .filter((citation): citation is Citation => citation !== undefined);
+};
 
 export const saveModelAnswer = async (workspaceId: string, text: string, citations: Citation[]) => {
     try {

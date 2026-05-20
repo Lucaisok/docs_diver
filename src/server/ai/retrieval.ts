@@ -10,13 +10,14 @@ export type RetrievedChunk = {
     content: string;
     chunkIndex: number;
     similarity: number;
+    tokenCount: number | null;
 };
 
 export async function retrieveRelevantChunks({
     workspaceId,
     query,
     limit = 6,
-    minSimilarity = 0.2,
+    minSimilarity = 0.35,
 }: {
     workspaceId: string;
     query: string;
@@ -47,6 +48,7 @@ export async function retrieveRelevantChunks({
                     d.name AS "documentName",
                     c.content,
                     c."chunkIndex",
+                    c."tokenCount",
                     (c.embedding <=> ${vector}::vector) AS distance
                 FROM "DocumentChunk" c
                 JOIN "Document" d ON d.id = c."documentId"
@@ -60,6 +62,7 @@ export async function retrieveRelevantChunks({
                 "documentName",
                 content,
                 "chunkIndex",
+                "tokenCount",
                 1 - distance AS similarity
             FROM scored
             WHERE 1 - distance >= ${safeMinSimilarity}
