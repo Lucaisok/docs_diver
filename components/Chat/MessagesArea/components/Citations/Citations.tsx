@@ -1,4 +1,5 @@
 import { Citation } from "@/src/types/message";
+import { SiteContent } from "@/src/lib/content";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import styles from "./citations.module.css";
@@ -26,7 +27,7 @@ export const Citations = ({ citations }: CitationsProps) => {
                     className={`${styles.citationsChevron} ${isExpanded ? styles.citationsChevronExpanded : ""}`}
                     aria-hidden="true"
                 />
-                <span className={styles.citationsTitle}>Sources</span>
+                <span className={styles.citationsTitle}>{SiteContent.sources}</span>
             </button>
 
             {isExpanded ? (
@@ -37,11 +38,11 @@ export const Citations = ({ citations }: CitationsProps) => {
                             className={styles.citationCard}
                         >
                             <p className={styles.citationSource}>
-                                [Source {citation.sourceNumber}] {citation.documentName}
+                                [{SiteContent.source} {citation.sourceNumber}] {citation.documentName}
                             </p>
 
                             <p className={styles.citationMeta}>
-                                Chunk {citation.chunkIndex} · similarity {citation.similarity.toFixed(3)}
+                                {SiteContent.chunk} {citation.chunkIndex} · {SiteContent.similarity} {citation.similarity.toFixed(3)}
                             </p>
 
                             <p className={styles.citationExcerpt}>{citation.excerpt}...</p>
