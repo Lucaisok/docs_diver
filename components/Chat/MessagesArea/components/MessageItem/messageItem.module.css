@@ -1,0 +1,37 @@
+.messageRow {
+    display: flex;
+    width: 100%;
+    padding: 0;
+}
+
+.userMessageRow {
+    justify-content: flex-end;
+}
+
+.assistantMessageRow {
+    justify-content: flex-start;
+}
+
+.messageText {
+    max-width: min(42rem, 85%);
+    margin: 0;
+    padding: 0.25rem 0;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+}
+
+.userMessageText {
+    margin-left: auto;
+    padding-inline-end: 1rem;
+    border-inline-end: 2px solid color-mix(in srgb, var(--color-text-muted) 48%, var(--color-bg));
+    color: color-mix(in srgb, var(--color-text-primary) 88%, var(--color-bg));
+}
+
+.assistantMessageText {
+    margin-right: auto;
+    padding-inline-start: 1rem;
+    border-inline-start: 2px solid color-mix(in srgb, var(--color-white) 66%, var(--color-bg));
+    color: color-mix(in srgb, var(--color-text-primary) 98%, var(--color-bg));
+}
