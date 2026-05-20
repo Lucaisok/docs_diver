@@ -77,6 +77,71 @@
     color: color-mix(in srgb, var(--color-text-primary) 98%, var(--color-bg));
 }
 
+.citationsSection {
+    margin-top: var(--spacing-md);
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border-dark);
+}
+
+.citationsToggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+}
+
+.citationsChevron {
+    width: 0.9rem;
+    height: 0.9rem;
+    transition: transform 160ms ease;
+}
+
+.citationsChevronExpanded {
+    transform: rotate(180deg);
+}
+
+.citationsTitle {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+}
+
+.citationsList {
+    margin-top: var(--spacing-sm);
+}
+
+.citationCard {
+    margin-top: var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border-dark);
+    background: color-mix(in srgb, var(--color-surface-2) 40%, transparent);
+    padding: var(--spacing-md);
+}
+
+.citationSource {
+    margin: 0;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-primary);
+}
+
+.citationMeta {
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.citationExcerpt {
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
 .loadingState {
     display: inline-flex;
     align-items: center;
