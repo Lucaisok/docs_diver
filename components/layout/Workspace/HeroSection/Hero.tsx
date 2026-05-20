@@ -1,14 +1,13 @@
-import Button from "@/components/Button/Button";
+import { Bot } from "lucide-react";
 import styles from "./Hero.module.css";
 import { SiteContent } from "@/src/lib/content";
 
 interface HeroProps {
     workspaceName: string;
-    documentsNumber: number;
-    openModal: () => void;
+    openUsageModal: () => void;
 }
 
-export const Hero = ({ workspaceName, documentsNumber, openModal }: HeroProps) => {
+export const Hero = ({ workspaceName, openUsageModal }: HeroProps) => {
     return <div className={styles.hero}>
         <div className={styles.content}>
             <h1 className={styles.title}>
@@ -18,6 +17,16 @@ export const Hero = ({ workspaceName, documentsNumber, openModal }: HeroProps) =
                 {SiteContent.askQuestions}
             </p>
         </div>
+
+        <button
+            type="button"
+            className={styles.usageButton}
+            onClick={openUsageModal}
+            aria-label={SiteContent.aiUsage}
+            title={SiteContent.aiUsage}
+        >
+            <Bot className={styles.usageIcon} aria-hidden="true" />
+        </button>
     </div>;
 
 };

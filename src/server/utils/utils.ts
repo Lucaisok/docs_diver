@@ -357,7 +357,14 @@ export const buildMessageAndHistory = (chunks: RetrievedChunk[], messages: unkno
     // Build the user message with context
     const userMessageContent = `Context: ${context || "No relevant context found."} Question: ${messageContent}`.trim();
 
-    return { history: modelMessages, messageWithContext: userMessageContent };
+    const estimatedInputTokens = Math.ceil(
+        (
+            context.length +
+            messageContent.length
+        ) / 4
+    );
+
+    return { history: modelMessages, messageWithContext: userMessageContent, estimatedInputTokens };
 };
 
 export const buildCitations = (chunks: RetrievedChunk[]): Citation[] => (chunks.map((chunk, index) => ({
@@ -413,6 +420,33 @@ export const saveModelAnswer = async (workspaceId: string, text: string, citatio
         console.error("Failed to save assistant message:", error);
         // Note: Can't send error to client here as stream already started
     }
+};
+
+export const saveAIRequestLog = async (selectedChunks: Citation[], usedChunks: Citation[], workspaceId: string, messageContent: string, estimatedInputTokens: number, streamedText: string, startedAt: number, model: string = "gpt-4o-mini") => {
+    const avgSimilarity =
+        selectedChunks.length > 0
+            ? selectedChunks.reduce(
+                (sum, chunk) => sum + chunk.similarity,
+                0
+            ) / selectedChunks.length
+            : null;
+
+    await prisma.aIRequestLog.create({
+        data: {
+            workspaceId,
+            userId: DEV_USER_ID,
+            question: messageContent,
+            answer: streamedText,
+            model: model,
+            chunksRetrieved: selectedChunks.length,
+            retrievedChunks: selectedChunks,
+            usedChunks,
+            avgSimilarity,
+            estimatedInputTokens,
+            estimatedOutputTokens: Math.ceil(streamedText.length / 4),
+            latencyMs: Date.now() - startedAt,
+        },
+    });
 };
 
 const isCitation = (value: unknown): value is Citation => {

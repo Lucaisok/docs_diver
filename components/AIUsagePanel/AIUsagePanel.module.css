@@ -1,0 +1,25 @@
+.panel {
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border-dark);
+    background: color-mix(in srgb, var(--color-surface-2) 20%, transparent);
+    padding: var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+.panelContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.title {
+    margin: 0;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+}
+
+.mutedText {
+    margin-top: var(--spacing-xs);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+}

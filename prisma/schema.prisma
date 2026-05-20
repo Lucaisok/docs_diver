@@ -26,9 +26,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  workspaces Workspace[]
-  documents  Document[]
-  messages   Message[]
+  workspaces    Workspace[]
+  documents     Document[]
+  messages      Message[]
+  aiRequestLogs AIRequestLog[]
 }
 
 model Workspace {
@@ -38,10 +39,11 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  documents Document[]
-  chunks    DocumentChunk[]
-  messages  Message[]
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents     Document[]
+  chunks        DocumentChunk[]
+  messages      Message[]
+  aiRequestLogs AIRequestLog[]
 
   @@unique([userId, name])
 }
@@ -86,6 +88,31 @@ model Message {
   content     String
   createdAt   DateTime    @default(now())
   citations   Json?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AIRequestLog {
+  id          String @id @default(uuid())
+  workspaceId String
+  userId      String
+
+  question String
+  answer   String
+  model    String
+
+  chunksRetrieved Int
+  retrievedChunks Json?
+  usedChunks      Json?
+  avgSimilarity   Float?
+
+  estimatedInputTokens  Int?
+  estimatedOutputTokens Int?
+
+  latencyMs Int?
+
+  createdAt DateTime @default(now())
 
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)

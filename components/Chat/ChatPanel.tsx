@@ -15,9 +15,10 @@ type ChatPanelProps = {
     hasDocuments: boolean;
     initialMessages: InitialMessage[];
     messagesError?: string | null;
+    onNewAnswer?: () => void;
 };
 
-export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messagesError }: ChatPanelProps) {
+export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messagesError, onNewAnswer }: ChatPanelProps) {
     const [chatError, setChatError] = useState<string | null>(null);
 
     const { messages, sendMessage, status } = useChat<UIMessage<ChatMessageMetadata>>({
@@ -29,6 +30,9 @@ export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messages
         onError: (error) => {
             console.error("Chat error:", error);
             setChatError(SiteContent.chatError);
+        },
+        onFinish: () => {
+            onNewAnswer?.();
         },
     });
 

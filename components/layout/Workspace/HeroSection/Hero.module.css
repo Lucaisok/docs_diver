@@ -28,3 +28,28 @@
     margin-top: var(--spacing-sm);
     color: var(--color-text-muted);
 }
+
+.usageButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border-dark);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.usageButton:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+    border-color: #444444;
+}
+
+.usageIcon {
+    width: 1rem;
+    height: 1rem;
+}

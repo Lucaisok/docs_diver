@@ -1,0 +1,45 @@
+.chunksTitle {
+    margin: 0 0 var(--spacing-xs);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.chunksList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.chunkCard {
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border-dark);
+    background: color-mix(in srgb, var(--color-surface-2) 40%, transparent);
+    padding: var(--spacing-md);
+    font-size: var(--font-size-xs);
+}
+
+.chunkTitle {
+    margin: 0;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+}
+
+.chunkMeta {
+    margin-top: var(--spacing-xs);
+    color: var(--color-text-muted);
+}
+
+.chunkExcerpt {
+    margin-top: var(--spacing-sm);
+    color: var(--color-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.mutedText {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+}

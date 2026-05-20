@@ -1,0 +1,31 @@
+.qaSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border-dark);
+}
+
+.qaBlock {
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border-dark);
+    background: color-mix(in srgb, var(--color-surface-2) 40%, transparent);
+    padding: var(--spacing-md);
+}
+
+.qaLabel {
+    margin: 0 0 var(--spacing-xs);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.qaText {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-primary);
+    line-height: 1.7;
+    white-space: pre-wrap;
+}

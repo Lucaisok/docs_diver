@@ -7,15 +7,19 @@ import { SiteContent } from "@/src/lib/content";
 import { getMessagesByWorkspace } from "@/src/server/queries/messages";
 import { InitialMessage } from "@/src/types/message";
 import { parseCitations } from "@/src/server/utils/utils";
+import { getLatestAIRequestLog } from "@/src/server/queries/ai-request-logs";
+import { AIRequestLogs } from "@/src/types/aiReqLogs";
+import { getFormattedAILogs } from "@/src/lib/formatters";
 
 type WrapperProps = {
     workspaceId: string;
 };
 
 export const Wrapper = async ({ workspaceId }: WrapperProps) => {
-    const [workspaceResult, messagesResult] = await Promise.all([
+    const [workspaceResult, messagesResult, requestLogs] = await Promise.all([
         getWorkspaceById(workspaceId, DEV_USER_ID),
         getMessagesByWorkspace(workspaceId, DEV_USER_ID),
+        getLatestAIRequestLog(workspaceId, DEV_USER_ID)
     ]);
 
     if (workspaceResult.error === SiteContent.workspaceNotFoundError) {
@@ -27,6 +31,7 @@ export const Wrapper = async ({ workspaceId }: WrapperProps) => {
     }
 
     const workspace = workspaceResult.data;
+    const aiLogs: AIRequestLogs | null = getFormattedAILogs(requestLogs);
     const initialMessages: InitialMessage[] = (messagesResult.success ? messagesResult.data : []).map(
         (message) => ({
             id: message.id,
@@ -36,5 +41,5 @@ export const Wrapper = async ({ workspaceId }: WrapperProps) => {
         }),
     );
 
-    return <WorkspaceShell workspace={workspace} workspaceId={workspaceId} initialMessages={initialMessages} messagesError={messagesResult.error} />;
+    return <WorkspaceShell workspace={workspace} workspaceId={workspaceId} initialMessages={initialMessages} messagesError={messagesResult.error} requestLogs={aiLogs} userId={DEV_USER_ID} />;
 };
