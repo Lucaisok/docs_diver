@@ -85,6 +85,7 @@ model Message {
   role        MessageRole
   content     String
   createdAt   DateTime    @default(now())
+  citations   Json?
 
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -8,6 +8,8 @@ import { SiteContent } from "@/src/lib/content";
 import { prisma } from "@/src/lib/prisma";
 import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { RetrievedChunk, retrieveRelevantChunks } from "../ai/retrieval";
+import { Citation } from "@/src/types/message";
+import { Prisma } from "@prisma/client";
 
 export const getVectorFromEmbedding = (embedding: number[]) => `[${embedding.join(",")}]`;
 
@@ -313,7 +315,7 @@ export const buildMessageAndHistory = (chunks: RetrievedChunk[], messages: unkno
         .join("\n\n");
 
     // Build messages for LLM - use convertToModelMessages to properly format history
-    const modelMessages = messages.slice(0, -1).map((msg: any) => ({
+    const modelMessages = messages.slice(-6).map((msg: any) => ({
         role: msg.role,
         content: extractMessageText(msg),
     }));
@@ -324,7 +326,16 @@ export const buildMessageAndHistory = (chunks: RetrievedChunk[], messages: unkno
     return { history: modelMessages, messageWithContext: userMessageContent };
 };
 
-export const saveModelAnswer = async (workspaceId: string, text: string) => {
+export const buildCitations = (chunks: RetrievedChunk[]): Citation[] => (chunks.map((chunk, index) => ({
+    sourceNumber: index + 1,
+    documentId: chunk.documentId,
+    documentName: chunk.documentName,
+    chunkIndex: chunk.chunkIndex,
+    excerpt: chunk.content.slice(0, 300),
+    similarity: chunk.similarity,
+})));
+
+export const saveModelAnswer = async (workspaceId: string, text: string, citations: Citation[]) => {
     try {
         await prisma.message.create({
             data: {
@@ -332,10 +343,32 @@ export const saveModelAnswer = async (workspaceId: string, text: string) => {
                 userId: DEV_USER_ID,
                 role: "ASSISTANT",
                 content: text,
+                citations
             },
         });
     } catch (error) {
         console.error("Failed to save assistant message:", error);
         // Note: Can't send error to client here as stream already started
     }
+};
+
+const isCitation = (value: unknown): value is Citation => {
+    if (!value || typeof value !== "object") return false;
+
+    const citation = value as Record<string, unknown>;
+
+    return (
+        typeof citation.sourceNumber === "number" &&
+        typeof citation.documentId === "string" &&
+        typeof citation.documentName === "string" &&
+        typeof citation.chunkIndex === "number" &&
+        typeof citation.excerpt === "string" &&
+        typeof citation.similarity === "number"
+    );
+};
+
+export const parseCitations = (value: Prisma.JsonValue | null | undefined): Citation[] => {
+    if (!Array.isArray(value)) return [];
+
+    return value.filter(isCitation);
 };

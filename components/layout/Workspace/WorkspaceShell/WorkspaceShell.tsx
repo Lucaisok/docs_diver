@@ -8,12 +8,12 @@ import { useState } from "react";
 import { WorkspaceDetails } from "@/src/types/workspace";
 import styles from "./workspaceShell.module.css";
 import { SiteContent } from "@/src/lib/content";
-import { UIMessage } from "ai";
+import { InitialMessage } from "@/src/types/message";
 
 interface WorkspaceShellProps {
     workspaceId: string;
     workspace: WorkspaceDetails;
-    initialMessages: UIMessage[];
+    initialMessages: InitialMessage[];
     messagesError?: string | null;
 }
 

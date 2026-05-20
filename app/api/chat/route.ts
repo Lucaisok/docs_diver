@@ -1,6 +1,6 @@
 import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
-import { parseAndValidateRequest, systemPrompt, assertWorkspaceAccess, getLastMessageContent, saveUserMessage, getChunks, buildMessageAndHistory, saveModelAnswer } from "@/src/server/utils/utils";
+import { parseAndValidateRequest, systemPrompt, assertWorkspaceAccess, getLastMessageContent, saveUserMessage, getChunks, buildMessageAndHistory, saveModelAnswer, buildCitations } from "@/src/server/utils/utils";
 import { SiteContent } from "@/src/lib/content";
 
 export const runtime = "nodejs";
@@ -31,6 +31,8 @@ export async function POST(req: Request) {
         //build message with context and format message history for model
         const { history, messageWithContext } = buildMessageAndHistory(chunks, messages, messageContent);
 
+        const citations = buildCitations(chunks);
+
         const result = streamText({
             model: openai("gpt-4o-mini"),
             system: systemPrompt,
@@ -42,11 +44,19 @@ export async function POST(req: Request) {
                 },
             ],
             async onFinish({ text }) {
-                await saveModelAnswer(workspaceId, text);
+                await saveModelAnswer(workspaceId, text, citations);
             },
         });
 
-        return result.toUIMessageStreamResponse();
+        return result.toUIMessageStreamResponse({
+            messageMetadata: ({ part }) => {
+                if (part.type === "finish") {
+                    return { citations };
+                }
+
+                return undefined;
+            },
+        });
 
     } catch (error) {
         console.error("Chat API error:", error);

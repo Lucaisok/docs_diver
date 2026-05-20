@@ -1,12 +1,12 @@
 import Card from "@/components/Card/Card";
 import styles from "./ChatSection.module.css";
 import { ChatPanel } from "@/components/Chat/ChatPanel";
-import { UIMessage } from "ai";
+import { InitialMessage } from "@/src/types/message";
 
 interface ChatSectionProps {
     workspaceId: string;
     hasDocuments: boolean;
-    initialMessages: UIMessage[];
+    initialMessages: InitialMessage[];
     messagesError?: string | null;
 }
 

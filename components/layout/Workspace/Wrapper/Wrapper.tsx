@@ -5,7 +5,8 @@ import { WorkspaceShell } from "../WorkspaceShell/WorkspaceShell";
 import { notFound } from "next/navigation";
 import { SiteContent } from "@/src/lib/content";
 import { getMessagesByWorkspace } from "@/src/server/queries/messages";
-import { UIMessage } from "ai";
+import { InitialMessage } from "@/src/types/message";
+import { parseCitations } from "@/src/server/utils/utils";
 
 type WrapperProps = {
     workspaceId: string;
@@ -26,11 +27,12 @@ export const Wrapper = async ({ workspaceId }: WrapperProps) => {
     }
 
     const workspace = workspaceResult.data;
-    const initialMessages: UIMessage[] = (messagesResult.success ? messagesResult.data : []).map(
+    const initialMessages: InitialMessage[] = (messagesResult.success ? messagesResult.data : []).map(
         (message) => ({
             id: message.id,
             role: message.role === "USER" ? "user" : "assistant",
             parts: [{ type: "text", text: message.content }],
+            citations: parseCitations((message as { citations?: unknown; }).citations as never),
         }),
     );
 

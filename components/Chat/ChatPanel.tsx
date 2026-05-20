@@ -7,18 +7,20 @@ import { SiteContent } from "@/src/lib/content";
 import { MessagesArea } from "./MessagesArea/MessagesArea";
 import { InputArea } from "./InputArea/InputArea";
 import { ErrorArea } from "./ErrorArea/ErrorArea";
+import { ChatMessageMetadata, InitialMessage } from "@/src/types/message";
+import { getFormattedMessages } from "@/src/lib/formatters";
 
 type ChatPanelProps = {
     workspaceId: string;
     hasDocuments: boolean;
-    initialMessages: UIMessage[];
+    initialMessages: InitialMessage[];
     messagesError?: string | null;
 };
 
 export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messagesError }: ChatPanelProps) {
     const [chatError, setChatError] = useState<string | null>(null);
 
-    const { messages, sendMessage, status } = useChat({
+    const { messages, sendMessage, status } = useChat<UIMessage<ChatMessageMetadata>>({
         id: workspaceId,
         transport: new DefaultChatTransport({
             api: "/api/chat",
@@ -34,13 +36,16 @@ export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messages
     const displayMessages = allMessages.length > 0 ? allMessages : initialMessages;
     const isLoading = status === "submitted" || status === "streaming";
 
+    //add citations
+    const formattedMessages = getFormattedMessages(displayMessages);
+
     const send = (value: { text: string; }) => sendMessage(value);
     const cleanInputError = () => setChatError(null);
 
     return (
         <div className={styles.panel}>
             <ErrorArea chatError={chatError} messagesError={messagesError} />
-            <MessagesArea displayMessages={displayMessages} isLoading={isLoading} />
+            <MessagesArea displayMessages={formattedMessages} isLoading={isLoading} />
             <InputArea
                 send={send}
                 cleanInputError={cleanInputError}
