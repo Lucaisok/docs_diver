@@ -1,6 +1,23 @@
 .card {
     background-color: var(--color-surface);
     border: 1px solid var(--color-border-dark);
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+}
+
+.card:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
 }
 
 .title {

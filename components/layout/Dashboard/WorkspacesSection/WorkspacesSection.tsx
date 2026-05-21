@@ -6,9 +6,10 @@ import { GetWorkspacesByUserIdResult } from "@/src/server/queries/workspaces";
 interface WorkspacesSectionProps {
     workspaces: GetWorkspacesByUserIdResult["data"];
     error: string | null;
+    onCreateWorkspace: () => void;
 }
 
-export const WorkspacesSection = ({ workspaces, error }: WorkspacesSectionProps) => {
+export const WorkspacesSection = ({ workspaces, error, onCreateWorkspace }: WorkspacesSectionProps) => {
 
     if (error || !workspaces) {
         return <p className={styles.error}>{error}</p>;
@@ -17,7 +18,7 @@ export const WorkspacesSection = ({ workspaces, error }: WorkspacesSectionProps)
     return (
         <div className={styles.grid}>
             {workspaces.length === 0
-                ? <EmptyDashboardCard />
+                ? <EmptyDashboardCard onClick={onCreateWorkspace} />
                 : workspaces.map((workspace) => (
                     <WorkspaceCard key={workspace.id} id={workspace.id} name={workspace.name} documentsCount={workspace._count.documents} lastUpdate={workspace.updatedAt.toLocaleDateString("en-GB", {
                         day: "2-digit",
