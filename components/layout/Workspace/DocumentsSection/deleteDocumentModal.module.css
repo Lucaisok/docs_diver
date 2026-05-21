@@ -1,0 +1,11 @@
+.confirmActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+}
+
+.deleteError {
+    margin-top: var(--spacing-md);
+    color: #fca5a5;
+    font-size: var(--font-size-sm);
+}

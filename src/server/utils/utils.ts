@@ -2,7 +2,7 @@ import { parsePdfText } from "../documents/parse-pdf";
 import { chunkText } from "../documents/chunk-text";
 import { createEmbeddings } from "../ai/embeddings";
 import { randomUUID } from "crypto";
-import { unlink } from "fs/promises";
+import { rm, unlink } from "fs/promises";
 import path from "path";
 import { SiteContent } from "@/src/lib/content";
 import { prisma } from "@/src/lib/prisma";
@@ -13,10 +13,41 @@ import { Prisma } from "@prisma/client";
 
 export const getVectorFromEmbedding = (embedding: number[]) => `[${embedding.join(",")}]`;
 
+const getUploadsRootPath = () => path.resolve(process.cwd(), "uploads");
+
+export const resolveUploadPath = (filePath: string) => path.isAbsolute(filePath)
+    ? path.resolve(filePath)
+    : path.resolve(process.cwd(), filePath);
+
+const isWithinUploadsRoot = (targetPath: string) => {
+    const uploadsRoot = getUploadsRootPath();
+    const relativeTargetPath = path.relative(uploadsRoot, targetPath);
+
+    return relativeTargetPath !== "" && !relativeTargetPath.startsWith("..") && !path.isAbsolute(relativeTargetPath);
+};
+
+export const removeWorkspaceUploadsDirectory = async (workspaceId: string) => {
+    if (!workspaceId) {
+        return;
+    }
+
+    const workspaceUploadsPath = path.resolve(getUploadsRootPath(), workspaceId);
+
+    if (!isWithinUploadsRoot(workspaceUploadsPath)) {
+        return;
+    }
+
+    try {
+        await rm(workspaceUploadsPath, { recursive: true, force: true });
+    } catch (error) {
+        console.error("Failed to remove workspace uploads directory", { workspaceId, error });
+    }
+};
+
 export const deleteFileIfPresent = async (filePath: string | undefined) => {
     if (filePath) {
         try {
-            await unlink(filePath);
+            await unlink(resolveUploadPath(filePath));
         } catch (unlinkError) {
             console.error("Failed to clean up uploaded file after error", { filePath, unlinkError });
         }

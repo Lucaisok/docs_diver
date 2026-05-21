@@ -11,6 +11,12 @@
     flex-direction: column;
 }
 
+.actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
 .title {
     color: var(--color-text-primary);
     font-size: 1.875rem;

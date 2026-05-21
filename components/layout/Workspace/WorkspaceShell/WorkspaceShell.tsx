@@ -12,6 +12,7 @@ import { InitialMessage } from "@/src/types/message";
 import { AIRequestLogs } from "@/src/types/aiReqLogs";
 import { AIUsagePanel } from "@/components/AIUsagePanel/AIUsagePanel";
 import { fetchLatestAIRequestLog } from "@/src/server/queries/ai-request-logs";
+import { WorkspaceSettingsModal } from "../HeroSection/WorkspaceSettingsModal";
 
 interface WorkspaceShellProps {
     workspaceId: string;
@@ -23,7 +24,9 @@ interface WorkspaceShellProps {
 }
 
 export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messagesError, requestLogs: initialRequestLogs, userId }: WorkspaceShellProps) => {
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isWorkspaceModalVisible, setIsWorkspaceModalVisible] = useState(false);
+    const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
+    const [isDocumentsModalVisible, setIsDocumentsModalVisible] = useState(false);
     const [isUsageModalVisible, setIsUsageModalVisible] = useState(false);
     const [requestLogs, setRequestLogs] = useState<AIRequestLogs | null>(initialRequestLogs);
 
@@ -35,6 +38,8 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
     return <>
         <Hero
             workspaceName={workspace.name}
+            openWorkspaceModal={() => setIsWorkspaceModalVisible(true)}
+            openDocumentsModal={() => setIsDocumentsModalVisible(true)}
             openUsageModal={() => setIsUsageModalVisible(true)}
         />
         <div className={styles.layout}>
@@ -45,8 +50,14 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
                 messagesError={messagesError}
                 onNewAnswer={handleNewAnswer}
             />
-            <DocumentsSection documents={workspace.documents} openModal={() => setIsModalVisible(true)} />
         </div>
+        <Modal
+            isOpen={isDocumentsModalVisible}
+            onClose={() => setIsDocumentsModalVisible(false)}
+            title={SiteContent.documents}
+        >
+            <DocumentsSection documents={workspace.documents} openModal={() => setIsUploadModalVisible(true)} />
+        </Modal>
         <Modal
             isOpen={isUsageModalVisible}
             onClose={() => setIsUsageModalVisible(false)}
@@ -56,12 +67,18 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
             <AIUsagePanel log={requestLogs} />
         </Modal>
         <Modal
-            isOpen={isModalVisible}
-            onClose={() => setIsModalVisible(false)}
+            isOpen={isUploadModalVisible}
+            onClose={() => setIsUploadModalVisible(false)}
             title={SiteContent.uploadPDF}
             description={SiteContent.uploadPDFDescription}
         >
-            <UploadDocumentForm workspaceId={workspaceId} onSuccess={() => setIsModalVisible(false)} />
+            <UploadDocumentForm workspaceId={workspaceId} onSuccess={() => setIsUploadModalVisible(false)} />
         </Modal>
+        <WorkspaceSettingsModal
+            isOpen={isWorkspaceModalVisible}
+            workspaceId={workspaceId}
+            workspaceName={workspace.name}
+            onClose={() => setIsWorkspaceModalVisible(false)}
+        />
     </>;
 };

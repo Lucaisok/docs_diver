@@ -1,71 +1,17 @@
-.documentsCard {
-    height: 36rem;
-    min-height: 0;
-}
-
-@media (min-width: 1024px) {
-    .documentsCard {
-        height: calc(100dvh - 16rem);
-        max-height: 48rem;
-    }
-}
-
 .documentsBody {
     display: flex;
     width: 100%;
-    min-height: 0;
-    flex: 1;
     flex-direction: column;
-}
-
-.emptyState {
-    width: 100%;
-    border-radius: var(--border-radius-lg);
-    border: 1px dashed var(--color-border-dark);
-    padding: var(--spacing-xl);
-    text-align: center;
-}
-
-.title {
-    color: var(--color-text-primary);
-    font-weight: var(--font-weight-medium);
-}
-
-.description {
-    margin-top: var(--spacing-sm);
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
+    gap: var(--spacing-md);
 }
 
 .documentsList {
     width: 100%;
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
 }
 
-.footerButton {
+.uploadButton {
     width: 100%;
-}
-
-.documentRow {
-    border-radius: var(--border-radius-lg);
-    border: 1px solid var(--color-border-dark);
-    background: var(--color-surface-2);
-    padding: var(--spacing-md);
-}
-
-.documentName {
-    color: var(--color-text-primary);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-}
-
-.documentMeta {
-    margin-top: var(--spacing-2xs);
-    color: var(--color-text-muted);
-    font-size: var(--font-size-xs);
 }

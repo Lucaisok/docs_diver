@@ -1,0 +1,18 @@
+.emptyState {
+    width: 100%;
+    border-radius: var(--border-radius-lg);
+    border: 1px dashed var(--color-border-dark);
+    padding: var(--spacing-xl);
+    text-align: center;
+}
+
+.title {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.description {
+    margin-top: var(--spacing-sm);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}

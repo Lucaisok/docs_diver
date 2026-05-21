@@ -1,0 +1,27 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+}
+
+.deleteButton {
+    border-color: #5c2d2d;
+    color: #fca5a5;
+}
+
+.deleteButton:hover:not(:disabled) {
+    border-color: #7a3434;
+    color: #fecaca;
+}
+
+.error {
+    margin-top: var(--spacing-md);
+    color: #fca5a5;
+    font-size: var(--font-size-sm);
+}

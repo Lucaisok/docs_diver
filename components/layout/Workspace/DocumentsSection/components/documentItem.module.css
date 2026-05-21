@@ -1,0 +1,47 @@
+.documentRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border-dark);
+    background: var(--color-surface-2);
+    padding: var(--spacing-md);
+}
+
+.deleteIconButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border-dark);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.deleteIconButton:hover {
+    background: var(--color-surface-hover);
+    border-color: #444444;
+    color: #ffb4b4;
+}
+
+.deleteIcon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.documentName {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.documentMeta {
+    margin-top: var(--spacing-2xs);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+}
