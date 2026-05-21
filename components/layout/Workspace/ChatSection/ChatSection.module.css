@@ -1,13 +1,71 @@
 .chatCard {
+    position: relative;
     height: 36rem;
     min-height: 0;
 }
 
+.chatCardExpanded {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    height: 100dvh !important;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: 0 22px 80px color-mix(in srgb, #000 38%, transparent);
+}
+
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    border: 0;
+    background: color-mix(in srgb, #000 36%, transparent);
+    cursor: pointer;
+}
+
 @media (min-width: 1024px) {
     .chatCard {
-        height: calc(100dvh - 16rem);
-        max-height: 48rem;
+        height: calc(100dvh - 13rem);
     }
+}
+
+.expandButton {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--color-border-dark);
+    background: color-mix(in srgb, var(--color-surface) 84%, var(--color-bg));
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.chatCardExpanded .expandButton {
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+}
+
+.expandButton:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+    border-color: #444444;
+}
+
+.expandButton:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.expandIcon {
+    width: 0.9rem;
+    height: 0.9rem;
 }
 
 .content {

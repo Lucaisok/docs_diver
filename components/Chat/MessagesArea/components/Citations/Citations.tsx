@@ -38,7 +38,7 @@ export const Citations = ({ citations }: CitationsProps) => {
                             className={styles.citationCard}
                         >
                             <p className={styles.citationSource}>
-                                [{SiteContent.source} {citation.sourceNumber}] {citation.documentName}
+                                {citation.documentName}
                             </p>
 
                             <p className={styles.citationMeta}>

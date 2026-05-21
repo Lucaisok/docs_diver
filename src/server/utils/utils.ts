@@ -173,7 +173,6 @@ export const systemPrompt = `You are a technical knowledge assistant. Your goal 
 
 CRITICAL RULES:
 - If the answer is not in the context, explicitly state: "I cannot determine this from the uploaded documents."
-- Always cite your sources using exact format: [Source N] where N is the source number.
 - Be concise and precise. Avoid speculation or external knowledge.
 - If sources conflict, mention both perspectives and cite each.`;
 

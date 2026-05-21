@@ -2,7 +2,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 import styles from "./Card.module.css";
 import { joinClasses } from "@/src/lib/utils";
 
-type CardProps = HTMLAttributes<HTMLDivElement> & {
+type CardProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
     title?: ReactNode;
     footer?: ReactNode;
 };
