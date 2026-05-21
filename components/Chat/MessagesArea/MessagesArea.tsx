@@ -10,12 +10,13 @@ interface MessagesAreaProps {
     workspaceId: string;
     displayMessages: InitialMessage[];
     isLoading: boolean;
+    isThinking: boolean;
     hasDocuments: boolean;
     showWelcomeMessage?: boolean;
     onUploadSuccess?: () => void;
 }
 
-export const MessagesArea = ({ workspaceId, displayMessages, isLoading, hasDocuments, showWelcomeMessage = false, onUploadSuccess }: MessagesAreaProps) => {
+export const MessagesArea = ({ workspaceId, displayMessages, isLoading, isThinking, hasDocuments, showWelcomeMessage = false, onUploadSuccess }: MessagesAreaProps) => {
     const transcriptRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -36,7 +37,7 @@ export const MessagesArea = ({ workspaceId, displayMessages, isLoading, hasDocum
                     </>
                 )}
 
-                {isLoading ? <LoadingState /> : null}
+                {isThinking ? <LoadingState /> : null}
             </div>
         </div>
     );

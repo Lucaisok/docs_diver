@@ -57,6 +57,7 @@ export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messages
     const allMessages = [...initialMessages, ...messages];
     const displayMessages = allMessages.length > 0 ? allMessages : initialMessages;
     const isLoading = status === "submitted" || status === "streaming";
+    const isThinking = status === "submitted";
 
     //add citations
     const formattedMessages = getFormattedMessages(displayMessages);
@@ -71,6 +72,7 @@ export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messages
                 workspaceId={workspaceId}
                 displayMessages={formattedMessages}
                 isLoading={isLoading}
+                isThinking={isThinking}
                 hasDocuments={hasAvailableDocuments}
                 showWelcomeMessage={showWelcomeMessage}
                 onUploadSuccess={() => {

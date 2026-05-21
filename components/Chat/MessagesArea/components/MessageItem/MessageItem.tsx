@@ -9,9 +9,10 @@ type MessageItemProps = {
 export const MessageItem = ({ message }: MessageItemProps) => {
     return (
         <div
+            data-role={message.role}
             className={`${styles.messageRow} ${message.role === "user" ? styles.userMessageRow : styles.assistantMessageRow}`}
         >
-            <div>
+            <div className={`${styles.messageContent} ${message.role === "user" ? styles.userMessageContent : styles.assistantMessageContent}`}>
                 {message.parts?.map((part, index) =>
                     part.type === "text" ? (
                         <p
