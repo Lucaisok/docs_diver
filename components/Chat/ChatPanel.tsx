@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import styles from "./ChatPanel.module.css";
@@ -16,10 +16,28 @@ type ChatPanelProps = {
     initialMessages: InitialMessage[];
     messagesError?: string | null;
     onNewAnswer?: () => void;
+    onUploadSuccess?: () => void;
 };
 
-export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messagesError, onNewAnswer }: ChatPanelProps) {
+export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messagesError, onNewAnswer, onUploadSuccess }: ChatPanelProps) {
     const [chatError, setChatError] = useState<string | null>(null);
+    const [hasAvailableDocuments, setHasAvailableDocuments] = useState(hasDocuments);
+    const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
+    const hadDocumentsRef = useRef(hasDocuments);
+
+    useEffect(() => {
+        setHasAvailableDocuments(hasDocuments);
+    }, [hasDocuments]);
+
+    useEffect(() => {
+        const hadDocuments = hadDocumentsRef.current;
+
+        if (!hadDocuments && hasAvailableDocuments) {
+            setShowWelcomeMessage(true);
+        }
+
+        hadDocumentsRef.current = hasAvailableDocuments;
+    }, [hasAvailableDocuments]);
 
     const { messages, sendMessage, status } = useChat<UIMessage<ChatMessageMetadata>>({
         id: workspaceId,
@@ -49,12 +67,22 @@ export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messages
     return (
         <div className={styles.panel}>
             <ErrorArea chatError={chatError} messagesError={messagesError} />
-            <MessagesArea displayMessages={formattedMessages} isLoading={isLoading} />
+            <MessagesArea
+                workspaceId={workspaceId}
+                displayMessages={formattedMessages}
+                isLoading={isLoading}
+                hasDocuments={hasAvailableDocuments}
+                showWelcomeMessage={showWelcomeMessage}
+                onUploadSuccess={() => {
+                    setHasAvailableDocuments(true);
+                    onUploadSuccess?.();
+                }}
+            />
             <InputArea
                 send={send}
                 cleanInputError={cleanInputError}
                 isLoading={isLoading}
-                isDisabled={!hasDocuments}
+                isDisabled={!hasAvailableDocuments}
             />
         </div>
     );

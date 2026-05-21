@@ -4,13 +4,18 @@ import { InitialMessage } from "@/src/types/message";
 import { MessageItem } from "./components/MessageItem/MessageItem";
 import { EmptyState } from "./components/EmptyState/EmptyState";
 import { LoadingState } from "./components/LoadingState/LoadingState";
+import { WelcomeMessage } from "./components/WelcomeMessage/WelcomeMessage";
 
 interface MessagesAreaProps {
+    workspaceId: string;
     displayMessages: InitialMessage[];
     isLoading: boolean;
+    hasDocuments: boolean;
+    showWelcomeMessage?: boolean;
+    onUploadSuccess?: () => void;
 }
 
-export const MessagesArea = ({ displayMessages, isLoading }: MessagesAreaProps) => {
+export const MessagesArea = ({ workspaceId, displayMessages, isLoading, hasDocuments, showWelcomeMessage = false, onUploadSuccess }: MessagesAreaProps) => {
     const transcriptRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -22,10 +27,13 @@ export const MessagesArea = ({ displayMessages, isLoading }: MessagesAreaProps) 
     return (
         <div className={styles.messagesArea}>
             <div ref={transcriptRef} className={`${styles.transcript} ${displayMessages.length > 0 ? styles.transcriptMasked : ""}`}>
-                {displayMessages.length === 0 ? (
-                    <EmptyState />
+                {displayMessages.length === 0 && !hasDocuments ? (
+                    <EmptyState workspaceId={workspaceId} onUploadSuccess={onUploadSuccess} />
                 ) : (
-                    displayMessages.map((message) => <MessageItem key={message.id} message={message} />)
+                    <>
+                        <WelcomeMessage isActive={showWelcomeMessage && hasDocuments} />
+                        {displayMessages.map((message) => <MessageItem key={message.id} message={message} />)}
+                    </>
                 )}
 
                 {isLoading ? <LoadingState /> : null}

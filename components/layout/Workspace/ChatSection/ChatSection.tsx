@@ -9,9 +9,10 @@ interface ChatSectionProps {
     initialMessages: InitialMessage[];
     messagesError?: string | null;
     onNewAnswer?: () => void;
+    onUploadSuccess?: () => void;
 }
 
-export const ChatSection = ({ workspaceId, hasDocuments, initialMessages, messagesError, onNewAnswer }: ChatSectionProps) => {
+export const ChatSection = ({ workspaceId, hasDocuments, initialMessages, messagesError, onNewAnswer, onUploadSuccess }: ChatSectionProps) => {
     return <Card title={"Chat Assistant"} className={styles.chatCard}>
         <div className={styles.content}>
             <ChatPanel
@@ -20,6 +21,7 @@ export const ChatSection = ({ workspaceId, hasDocuments, initialMessages, messag
                 initialMessages={initialMessages}
                 messagesError={messagesError}
                 onNewAnswer={onNewAnswer}
+                onUploadSuccess={onUploadSuccess}
             />
         </div>
     </Card>;

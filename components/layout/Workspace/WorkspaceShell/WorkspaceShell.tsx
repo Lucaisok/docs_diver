@@ -3,8 +3,7 @@ import { ChatSection } from "../ChatSection/ChatSection";
 import { DocumentsSection } from "../DocumentsSection/DocumentsSection";
 import { Hero } from "../HeroSection/Hero";
 import Modal from "@/components/Modal/Modal";
-import { UploadDocumentForm } from "../UploadDocumentForm/UploadDocumentForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WorkspaceDetails } from "@/src/types/workspace";
 import styles from "./workspaceShell.module.css";
 import { SiteContent } from "@/src/lib/content";
@@ -25,19 +24,34 @@ interface WorkspaceShellProps {
 
 export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messagesError, requestLogs: initialRequestLogs, userId }: WorkspaceShellProps) => {
     const [isWorkspaceModalVisible, setIsWorkspaceModalVisible] = useState(false);
-    const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
     const [isDocumentsModalVisible, setIsDocumentsModalVisible] = useState(false);
     const [isUsageModalVisible, setIsUsageModalVisible] = useState(false);
     const [requestLogs, setRequestLogs] = useState<AIRequestLogs | null>(initialRequestLogs);
+    const [documentsCount, setDocumentsCount] = useState(workspace._count.documents);
+
+    useEffect(() => {
+        setDocumentsCount(workspace._count.documents);
+    }, [workspace._count.documents]);
 
     const handleNewAnswer = async () => {
         const latestLogs = await fetchLatestAIRequestLog(workspaceId, userId);
         setRequestLogs(latestLogs);
     };
 
+    const handleUploadSuccess = () => {
+        setDocumentsCount((currentCount) => {
+            if (currentCount === 0) {
+                setIsDocumentsModalVisible(false);
+            }
+
+            return currentCount + 1;
+        });
+    };
+
     return <>
         <Hero
             workspaceName={workspace.name}
+            documentsCount={documentsCount}
             openWorkspaceModal={() => setIsWorkspaceModalVisible(true)}
             openDocumentsModal={() => setIsDocumentsModalVisible(true)}
             openUsageModal={() => setIsUsageModalVisible(true)}
@@ -45,10 +59,11 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
         <div className={styles.layout}>
             <ChatSection
                 workspaceId={workspaceId}
-                hasDocuments={workspace._count.documents > 0}
+                hasDocuments={documentsCount > 0}
                 initialMessages={initialMessages}
                 messagesError={messagesError}
                 onNewAnswer={handleNewAnswer}
+                onUploadSuccess={handleUploadSuccess}
             />
         </div>
         <Modal
@@ -56,7 +71,7 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
             onClose={() => setIsDocumentsModalVisible(false)}
             title={SiteContent.documents}
         >
-            <DocumentsSection documents={workspace.documents} openModal={() => setIsUploadModalVisible(true)} />
+            <DocumentsSection workspaceId={workspaceId} documents={workspace.documents} onUploadSuccess={handleUploadSuccess} />
         </Modal>
         <Modal
             isOpen={isUsageModalVisible}
@@ -65,14 +80,6 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
             description={SiteContent.aiUsageDescription}
         >
             <AIUsagePanel log={requestLogs} />
-        </Modal>
-        <Modal
-            isOpen={isUploadModalVisible}
-            onClose={() => setIsUploadModalVisible(false)}
-            title={SiteContent.uploadPDF}
-            description={SiteContent.uploadPDFDescription}
-        >
-            <UploadDocumentForm workspaceId={workspaceId} onSuccess={() => setIsUploadModalVisible(false)} />
         </Modal>
         <WorkspaceSettingsModal
             isOpen={isWorkspaceModalVisible}

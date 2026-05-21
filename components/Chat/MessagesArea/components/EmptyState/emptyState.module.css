@@ -1,12 +1,27 @@
 .emptyState {
+    display: block;
     width: 100%;
     border-radius: var(--border-radius-lg);
     border: 1px dashed var(--color-border-dark);
+    background: transparent;
     padding: var(--spacing-xl);
     text-align: center;
+    cursor: pointer;
+}
+
+.emptyState:hover:not(:disabled) {
+    border-color: #444444;
+    background: color-mix(in srgb, var(--color-surface) 65%, transparent);
+}
+
+.emptyState:disabled {
+    cursor: progress;
 }
 
 .emptyStateTitle {
+    display: flex;
+    justify-content: center;
+    min-height: 1.5rem;
     font-weight: var(--font-weight-medium);
     color: var(--color-text-primary);
 }
@@ -14,4 +29,30 @@
 .emptyStateDescription {
     margin-top: var(--spacing-sm);
     color: var(--color-text-muted);
+}
+
+.error {
+    margin-top: var(--spacing-sm);
+    color: #fca5a5;
+    font-size: var(--font-size-sm);
+}
+
+.spinner {
+    width: 1.125rem;
+    height: 1.125rem;
+    animation: spin 0.9s linear infinite;
+}
+
+.hiddenInput {
+    display: none;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

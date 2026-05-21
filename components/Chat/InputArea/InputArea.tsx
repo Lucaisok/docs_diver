@@ -39,6 +39,7 @@ export const InputArea = ({ cleanInputError, send, isDisabled, isLoading }: Inpu
             value={input}
             onChange={(event) => handleInputChange(event.target.value)}
             placeholder={SiteContent.questionPlaceholder}
+            disabled={isLoading || isDisabled}
         />
         <Button type="submit" disabled={isLoading || isDisabled}>
             {SiteContent.ask}

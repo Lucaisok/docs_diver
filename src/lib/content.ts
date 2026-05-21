@@ -12,6 +12,7 @@ export const SiteContent = {
     chat: "Chat",
     chats: "Chats",
     firstQuestion: "Upload a document to enable chat",
+    welcomeMessage: "Nice, your first document is indexed. Ask me anything about it and I will answer with source-backed citations.",
     questionPlaceholder: "Ask a question about your documents...",
     promptDescription: "Once documents are indexed, answers will include citations from your sources.",
     ask: "Ask",

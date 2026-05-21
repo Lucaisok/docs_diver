@@ -1,6 +1,7 @@
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal/Modal";
 import { SiteContent } from "@/src/lib/content";
+import { Loader2 } from "lucide-react";
 import styles from "./deleteWorkspaceModal.module.css";
 
 type DeleteWorkspaceModalProps = {
@@ -41,7 +42,10 @@ export const DeleteWorkspaceModal = ({
                     onClick={onConfirm}
                     disabled={isDeleting}
                 >
-                    {SiteContent.deleteWorkspace}
+                    <span className={styles.buttonContent}>
+                        {isDeleting ? <Loader2 className={styles.spinnerIcon} aria-hidden="true" /> : null}
+                        {SiteContent.deleteWorkspace}
+                    </span>
                 </Button>
             </div>
             {error ? <p className={styles.deleteError}>{error}</p> : null}
