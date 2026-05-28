@@ -1,0 +1,53 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.previewFrame {
+    overflow: auto;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border-dark);
+    background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+    padding: var(--spacing-sm);
+}
+
+.loadingState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24rem;
+}
+
+.loadingIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-text-muted);
+    animation: loadingSpin 1s linear infinite;
+}
+
+.excerptCard {
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border-dark);
+    background: color-mix(in srgb, var(--color-surface-2) 35%, transparent);
+    padding: var(--spacing-sm);
+}
+
+.excerptTitle {
+    margin: 0 0 var(--spacing-xs) 0;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+}
+
+.excerptText {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+@keyframes loadingSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}

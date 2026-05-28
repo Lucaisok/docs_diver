@@ -1,6 +1,7 @@
 "use client";
 
-import { JSX, useEffect, type ReactNode } from "react";
+import { JSX, useEffect, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import Button from "@/components/Button/Button";
 import { joinClasses } from "@/src/lib/utils";
 import styles from "./Modal.module.css";
@@ -35,6 +36,11 @@ export const Modal = ({
     children,
     className,
 }: ModalProps) => {
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     useEffect(() => {
         if (!isOpen) {
@@ -56,7 +62,11 @@ export const Modal = ({
         return null;
     }
 
-    return (
+    if (!isMounted) {
+        return null;
+    }
+
+    return createPortal(
         <div className={styles.overlay} onClick={onClose} role="presentation">
             <div
                 className={joinClasses(styles.modal, className)}
@@ -77,7 +87,8 @@ export const Modal = ({
                 </div>
                 <div className={styles.content}>{children}</div>
             </div>
-        </div>
+        </div>,
+        document.body,
     );
 };
 

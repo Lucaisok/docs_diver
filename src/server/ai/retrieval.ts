@@ -8,6 +8,7 @@ export type RetrievedChunk = {
     documentId: string;
     documentName: string;
     content: string;
+    pageNumber: number | null;
     chunkIndex: number;
     similarity: number;
     tokenCount: number | null;
@@ -47,6 +48,7 @@ export async function retrieveRelevantChunks({
                     c."documentId",
                     d.name AS "documentName",
                     c.content,
+                    c."pageNumber",
                     c."chunkIndex",
                     c."tokenCount",
                     (c.embedding <=> ${vector}::vector) AS distance
@@ -61,6 +63,7 @@ export async function retrieveRelevantChunks({
                 "documentId",
                 "documentName",
                 content,
+                "pageNumber",
                 "chunkIndex",
                 "tokenCount",
                 1 - distance AS similarity

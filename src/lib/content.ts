@@ -93,5 +93,7 @@ export const SiteContent = {
     evalTitle: "Retrieval Evaluation",
     evalDescription: "Inspect retrieved chunks and whether the model cited them.",
     workspaceDeleteError: "Unable to delete workspace right now. Please try again.",
+    loadingPdf: "Loading PDF...",
+    selectedChunkExcerpt: "Selected chunk excerpt",
 
 };

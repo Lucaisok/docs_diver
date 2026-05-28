@@ -68,7 +68,12 @@ export const createSafeFileName = (originalName: string) => {
     return `${Date.now()}-${baseName}${extension}`;
 };
 
-// Parses the PDF at filePath, splits the extracted text into overlapping chunks,
+type PageChunk = {
+    pageNumber: number;
+    content: string;
+};
+
+// Parses the PDF at filePath, splits each page into overlapping chunks,
 // generates an embedding vector for each chunk, then inserts all chunks into the
 // DocumentChunk table in a single transaction.
 //
@@ -84,17 +89,24 @@ export const createSafeFileName = (originalName: string) => {
 // document in a consistent state before the caller sets its status to FAILED.
 export const writeChunks = async ({ filePath, documentId, workspaceId }: { filePath: string, documentId: string, workspaceId: string; }): Promise<{ success: boolean; error: string | null; }> => {
     try {
-        const { text } = await parsePdfText(filePath);
-        const chunks = chunkText(text, {
-            maxChars: 3000,
-            overlapChars: 300,
+        const { pages } = await parsePdfText(filePath);
+        const chunks: PageChunk[] = pages.flatMap((page) => {
+            const pageChunks = chunkText(page.text, {
+                maxChars: 3000,
+                overlapChars: 300,
+            });
+
+            return pageChunks.map((content) => ({
+                pageNumber: page.num,
+                content,
+            }));
         });
         if (chunks.length === 0) {
             // Happens when the PDF contains only images with no extractable text (e.g. scanned pages)
             return { success: false, error: SiteContent.textExtractionError };
         }
 
-        const embeddings = await createEmbeddings(chunks);
+        const embeddings = await createEmbeddings(chunks.map((chunk) => chunk.content));
 
         // Sanity check: the API must return exactly one embedding per input chunk
         if (embeddings.length !== chunks.length) {
@@ -127,6 +139,7 @@ export const writeChunks = async ({ filePath, documentId, workspaceId }: { fileP
                         "documentId",
                         "workspaceId",
                         content,
+                        "pageNumber",
                         "chunkIndex",
                         "tokenCount",
                         embedding,
@@ -137,9 +150,10 @@ export const writeChunks = async ({ filePath, documentId, workspaceId }: { fileP
                         ${randomUUID()},
                         ${documentId},
                         ${workspaceId},
-                        ${chunk},
+                        ${chunk.content},
+                        ${chunk.pageNumber},
                         ${index},
-                        ${Math.ceil(chunk.length / 4)},
+                        ${Math.ceil(chunk.content.length / 4)},
                         ${vector}::vector,
                         NOW()
                     )
@@ -402,6 +416,7 @@ export const buildCitations = (chunks: RetrievedChunk[]): Citation[] => (chunks.
     sourceNumber: index + 1,
     documentId: chunk.documentId,
     documentName: chunk.documentName,
+    pageNumber: chunk.pageNumber,
     chunkIndex: chunk.chunkIndex,
     excerpt: chunk.content.slice(0, 300),
     similarity: chunk.similarity,

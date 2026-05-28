@@ -3,13 +3,20 @@ import { SiteContent } from "@/src/lib/content";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import styles from "./citations.module.css";
+import Modal from "@/components/Modal/Modal";
+import { PDFPreview } from "@/components/Documents/PDFPreview/PDFPreview";
 
 type CitationsProps = {
     citations: Citation[];
 };
 
+type CitationPreviewSource = Citation & {
+    pageNumber?: number | null;
+};
+
 export const Citations = ({ citations }: CitationsProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [selectedSource, setSelectedSource] = useState<CitationPreviewSource | null>(null);
 
     if (citations.length === 0) {
         return null;
@@ -33,9 +40,11 @@ export const Citations = ({ citations }: CitationsProps) => {
             {isExpanded ? (
                 <div className={styles.citationsList}>
                     {citations.map((citation) => (
-                        <div
+                        <button
+                            type="button"
                             key={`${citation.documentId}-${citation.chunkIndex}`}
                             className={styles.citationCard}
+                            onClick={() => setSelectedSource(citation)}
                         >
                             <p className={styles.citationSource}>
                                 {citation.documentName}
@@ -46,10 +55,25 @@ export const Citations = ({ citations }: CitationsProps) => {
                             </p>
 
                             <p className={styles.citationExcerpt}>{citation.excerpt}...</p>
-                        </div>
+                        </button>
                     ))}
                 </div>
             ) : null}
+
+            <Modal
+                isOpen={selectedSource !== null}
+                onClose={() => setSelectedSource(null)}
+                title={selectedSource?.documentName}
+                className={styles.pdfPreviewModal}
+            >
+                {selectedSource ? (
+                    <PDFPreview
+                        documentId={selectedSource.documentId}
+                        pageNumber={selectedSource.pageNumber ?? 1}
+                        excerpt={selectedSource.excerpt}
+                    />
+                ) : null}
+            </Modal>
         </div>
     );
 };

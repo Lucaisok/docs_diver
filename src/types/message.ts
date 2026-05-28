@@ -2,6 +2,7 @@ export type Citation = {
     sourceNumber: number;
     documentId: string;
     documentName: string;
+    pageNumber?: number | null;
     chunkIndex: number;
     excerpt: string;
     similarity: number;
@@ -30,6 +31,7 @@ const isCitation = (value: unknown): value is Citation => {
         typeof citation.sourceNumber === "number" &&
         typeof citation.documentId === "string" &&
         typeof citation.documentName === "string" &&
+        (typeof citation.pageNumber === "number" || citation.pageNumber === null || typeof citation.pageNumber === "undefined") &&
         typeof citation.chunkIndex === "number" &&
         typeof citation.excerpt === "string" &&
         typeof citation.similarity === "number"
