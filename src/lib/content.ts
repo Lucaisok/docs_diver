@@ -95,5 +95,13 @@ export const SiteContent = {
     workspaceDeleteError: "Unable to delete workspace right now. Please try again.",
     loadingPdf: "Loading PDF...",
     selectedChunkExcerpt: "Selected chunk excerpt",
+    page: "Page",
+    of: "of",
+    firstPage: "First page",
+    previousPage: "Previous page",
+    nextPage: "Next page",
+    lastPage: "Last page",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
 
 };
