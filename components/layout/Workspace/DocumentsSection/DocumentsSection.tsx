@@ -15,10 +15,11 @@ import { Loader2 } from "lucide-react";
 interface DocumentsSectionProps {
     workspaceId: string;
     documents: WorkspaceDocument[];
+    isDemo: boolean;
     onUploadSuccess?: () => void;
 }
 
-export const DocumentsSection = ({ workspaceId, documents, onUploadSuccess }: DocumentsSectionProps) => {
+export const DocumentsSection = ({ workspaceId, documents, isDemo, onUploadSuccess }: DocumentsSectionProps) => {
     const router = useRouter();
     const inputRef = useRef<HTMLInputElement>(null);
     const [selectedDocument, setSelectedDocument] = useState<WorkspaceDocument | null>(null);
@@ -28,7 +29,7 @@ export const DocumentsSection = ({ workspaceId, documents, onUploadSuccess }: Do
     const hasDocuments = documents.length > 0;
 
     const openFilePicker = () => {
-        if (isUploading) {
+        if (isUploading || isDemo) {
             return;
         }
 
@@ -71,6 +72,11 @@ export const DocumentsSection = ({ workspaceId, documents, onUploadSuccess }: Do
             return;
         }
 
+        if (isDemo || selectedDocument.isDemo) {
+            setError(SiteContent.demoDocumentDeleteBlockedError);
+            return;
+        }
+
         setIsDeleting(true);
         setError(null);
 
@@ -96,6 +102,7 @@ export const DocumentsSection = ({ workspaceId, documents, onUploadSuccess }: Do
                         <DocumentItem
                             key={document.id}
                             document={document}
+                            canDelete={!isDemo && !document.isDemo}
                             onDeleteClick={(targetDocument) => {
                                 setError(null);
                                 setSelectedDocument(targetDocument);
@@ -104,18 +111,22 @@ export const DocumentsSection = ({ workspaceId, documents, onUploadSuccess }: Do
                     ))}
                 </div>
             }
-            <Button className={styles.uploadButton} onClick={openFilePicker} disabled={isUploading}>
-                {isUploading ? <Loader2 className={styles.spinnerIcon} aria-hidden="true" /> : SiteContent.uploadPDF}
-            </Button>
+            {!isDemo ? (
+                <Button className={styles.uploadButton} onClick={openFilePicker} disabled={isUploading}>
+                    {isUploading ? <Loader2 className={styles.spinnerIcon} aria-hidden="true" /> : SiteContent.uploadPDF}
+                </Button>
+            ) : null}
             {error ? <p className={styles.error}>{error}</p> : null}
-            <input
-                ref={inputRef}
-                className={styles.hiddenInput}
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileChange}
-                disabled={isUploading}
-            />
+            {!isDemo ? (
+                <input
+                    ref={inputRef}
+                    className={styles.hiddenInput}
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                    disabled={isUploading}
+                />
+            ) : null}
         </div>
 
         <DeleteDocumentModal

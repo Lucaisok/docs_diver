@@ -1,9 +1,12 @@
 import { prisma } from "@/src/lib/prisma";
 import { randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
+import { createDemoWorkspaceForUser } from "../demo/create-demo-workspace";
+import { redirect } from "next/navigation";
 
 const SESSION_COOKIE_NAME = "docs_diver_session";
 const SESSION_DAYS = 7;
+const SESSION_BOOTSTRAP_ROUTE = "/api/session/bootstrap";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -21,19 +24,58 @@ const createAnonymousUser = async () => {
         },
     });
 
+    await createDemoWorkspaceForUser(user.id);
+
     return { user, expiresAt };
+};
+
+export const createAnonymousSessionUser = createAnonymousUser;
+
+const getExistingSessionUserId = async () => {
+    const cookieStore = await cookies();
+    const existingUserId = cookieStore.get(SESSION_COOKIE_NAME)?.value?.trim();
+
+    if (!existingUserId || !UUID_PATTERN.test(existingUserId)) {
+        return null;
+    }
+
+    const existingUser = await prisma.user.findUnique({
+        where: {
+            id: existingUserId,
+        },
+        select: {
+            id: true,
+        },
+    });
+
+    if (!existingUser) {
+        return null;
+    }
+
+    await createDemoWorkspaceForUser(existingUser.id);
+    return existingUser.id;
+};
+
+export const getCurrentUserIdOrRedirect = async (returnTo: string) => {
+    const existingUserId = await getExistingSessionUserId();
+
+    if (existingUserId) {
+        return existingUserId;
+    }
+
+    const safeReturnTo = returnTo.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/dashboard";
+    redirect(`${SESSION_BOOTSTRAP_ROUTE}?returnTo=${encodeURIComponent(safeReturnTo)}`);
 };
 
 export const getCurrentUserId = async () => {
     try {
-        const cookieStore = await cookies();
-        const existingUserId = cookieStore.get(SESSION_COOKIE_NAME)?.value?.trim();
+        const existingUserId = await getExistingSessionUserId();
 
-        // Reuse the cookie when it looks valid; otherwise mint a fresh anonymous user.
-        if (existingUserId && UUID_PATTERN.test(existingUserId)) {
+        if (existingUserId) {
             return existingUserId;
         }
 
+        const cookieStore = await cookies();
         const { user, expiresAt } = await createAnonymousUser();
 
         try {

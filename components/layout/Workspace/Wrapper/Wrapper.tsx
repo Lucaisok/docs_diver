@@ -9,14 +9,14 @@ import { parseCitations } from "@/src/server/utils/utils";
 import { getLatestAIRequestLog } from "@/src/server/queries/ai-request-logs";
 import { AIRequestLogs } from "@/src/types/aiReqLogs";
 import { getFormattedAILogs } from "@/src/lib/formatters";
-import { getCurrentUserId } from "@/src/server/auth/session-user";
+import { getCurrentUserIdOrRedirect } from "@/src/server/auth/session-user";
 
 type WrapperProps = {
     workspaceId: string;
 };
 
 export const Wrapper = async ({ workspaceId }: WrapperProps) => {
-    const userId = await getCurrentUserId();
+    const userId = await getCurrentUserIdOrRedirect(`/workspaces/${workspaceId}`);
     const [workspaceResult, messagesResult, requestLogs] = await Promise.all([
         getWorkspaceById(workspaceId, userId),
         getMessagesByWorkspace(workspaceId, userId),

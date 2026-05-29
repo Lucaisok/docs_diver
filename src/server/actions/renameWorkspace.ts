@@ -27,11 +27,16 @@ export const renameWorkspace = async (workspaceId: string, name: string): Promis
             },
             select: {
                 id: true,
+                isDemo: true,
             },
         });
 
         if (!workspace) {
             return { success: false, data: null, error: SiteContent.workspaceNotFoundError };
+        }
+
+        if (workspace.isDemo) {
+            return { success: false, data: null, error: SiteContent.demoWorkspaceLockedError };
         }
 
         await prisma.workspace.update({

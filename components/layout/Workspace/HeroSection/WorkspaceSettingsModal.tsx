@@ -15,6 +15,7 @@ type WorkspaceSettingsModalProps = {
     isOpen: boolean;
     workspaceId: string;
     workspaceName: string;
+    isDemo: boolean;
     onClose: () => void;
 };
 
@@ -22,6 +23,7 @@ export const WorkspaceSettingsModal = ({
     isOpen,
     workspaceId,
     workspaceName,
+    isDemo,
     onClose,
 }: WorkspaceSettingsModalProps) => {
     const router = useRouter();
@@ -107,22 +109,24 @@ export const WorkspaceSettingsModal = ({
                             }
                         }}
                         placeholder={SiteContent.namespace}
-                        disabled={isRenaming || isDeleting}
+                        disabled={isRenaming || isDeleting || isDemo}
                     />
-                    <div className={styles.actions}>
-                        <Button type="submit" disabled={isRenaming || isDeleting}>
-                            {SiteContent.renameWorkspace}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            className={styles.deleteButton}
-                            onClick={() => setIsDeleteModalOpen(true)}
-                            disabled={isRenaming || isDeleting}
-                        >
-                            {SiteContent.deleteWorkspace}
-                        </Button>
-                    </div>
+                    {!isDemo ? (
+                        <div className={styles.actions}>
+                            <Button type="submit" disabled={isRenaming || isDeleting}>
+                                {SiteContent.renameWorkspace}
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                className={styles.deleteButton}
+                                onClick={() => setIsDeleteModalOpen(true)}
+                                disabled={isRenaming || isDeleting}
+                            >
+                                {SiteContent.deleteWorkspace}
+                            </Button>
+                        </div>
+                    ) : null}
                 </form>
                 {error ? <p className={styles.error}>{error}</p> : null}
             </Modal>

@@ -15,11 +15,25 @@ export async function deleteDocument(documentId: string, workspaceId: string): P
                 workspaceId,
                 userId: userId,
             },
+            select: {
+                id: true,
+                filePath: true,
+                isDemo: true,
+                workspace: {
+                    select: {
+                        isDemo: true,
+                    },
+                },
+            },
         });
 
         if (!document) {
             console.error(SiteContent.documentNotFoundError);
             return { success: false, data: null, error: SiteContent.documentDeleteError };
+        }
+
+        if (document.isDemo || document.workspace.isDemo) {
+            return { success: false, data: null, error: SiteContent.demoDocumentDeleteBlockedError };
         }
 
         await prisma.document.delete({

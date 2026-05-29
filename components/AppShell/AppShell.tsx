@@ -19,7 +19,7 @@ export function AppShell({ children }: AppShellProps) {
                     </Link>
 
                     <nav className={styles.nav}>
-                        <Link href={routes.dashboard} className={styles.navLink}>
+                        <Link href={routes.dashboard} className={styles.navLink} prefetch={false}>
                             {content.dashboard}
                         </Link>
                     </nav>

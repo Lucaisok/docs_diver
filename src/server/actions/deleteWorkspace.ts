@@ -21,6 +21,10 @@ export async function deleteWorkspace(workspaceId: string): Promise<Result<null>
             return { success: false, data: null, error: SiteContent.workspaceDeleteError };
         }
 
+        if (workspace.isDemo) {
+            return { success: false, data: null, error: SiteContent.demoWorkspaceLockedError };
+        }
+
         const documents = await prisma.document.findMany({
             where: {
                 workspaceId,

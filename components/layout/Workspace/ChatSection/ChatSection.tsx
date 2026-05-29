@@ -9,13 +9,14 @@ import { useEffect, useState } from "react";
 interface ChatSectionProps {
     workspaceId: string;
     hasDocuments: boolean;
+    isDemo: boolean;
     initialMessages: InitialMessage[];
     messagesError?: string | null;
     onNewAnswer?: () => void;
     onUploadSuccess?: () => void;
 }
 
-export const ChatSection = ({ workspaceId, hasDocuments, initialMessages, messagesError, onNewAnswer, onUploadSuccess }: ChatSectionProps) => {
+export const ChatSection = ({ workspaceId, hasDocuments, isDemo, initialMessages, messagesError, onNewAnswer, onUploadSuccess }: ChatSectionProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     useEffect(() => {
@@ -62,6 +63,7 @@ export const ChatSection = ({ workspaceId, hasDocuments, initialMessages, messag
                     <ChatPanel
                         workspaceId={workspaceId}
                         hasDocuments={hasDocuments}
+                        isDemo={isDemo}
                         initialMessages={initialMessages}
                         messagesError={messagesError}
                         onNewAnswer={onNewAnswer}

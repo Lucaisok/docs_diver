@@ -52,6 +52,7 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
         <Hero
             workspaceName={workspace.name}
             documentsCount={documentsCount}
+            isDemo={workspace.isDemo}
             openWorkspaceModal={() => setIsWorkspaceModalVisible(true)}
             openDocumentsModal={() => setIsDocumentsModalVisible(true)}
             openUsageModal={() => setIsUsageModalVisible(true)}
@@ -60,6 +61,7 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
             <ChatSection
                 workspaceId={workspaceId}
                 hasDocuments={documentsCount > 0}
+                isDemo={workspace.isDemo}
                 initialMessages={initialMessages}
                 messagesError={messagesError}
                 onNewAnswer={handleNewAnswer}
@@ -71,7 +73,7 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
             onClose={() => setIsDocumentsModalVisible(false)}
             title={SiteContent.documents}
         >
-            <DocumentsSection workspaceId={workspaceId} documents={workspace.documents} onUploadSuccess={handleUploadSuccess} />
+            <DocumentsSection workspaceId={workspaceId} documents={workspace.documents} isDemo={workspace.isDemo} onUploadSuccess={handleUploadSuccess} />
         </Modal>
         <Modal
             isOpen={isUsageModalVisible}
@@ -85,6 +87,7 @@ export const WorkspaceShell = ({ workspace, workspaceId, initialMessages, messag
             isOpen={isWorkspaceModalVisible}
             workspaceId={workspaceId}
             workspaceName={workspace.name}
+            isDemo={workspace.isDemo}
             onClose={() => setIsWorkspaceModalVisible(false)}
         />
     </>;

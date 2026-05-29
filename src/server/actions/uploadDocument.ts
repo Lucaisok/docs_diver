@@ -58,6 +58,15 @@ export const uploadDocument = async (formData: FormData): Promise<Result<null>> 
                 error: SiteContent.workspaceNotFoundError
             };
         }
+
+        if (workspace.isDemo) {
+            return {
+                success: false,
+                data: null,
+                error: SiteContent.demoWorkspaceUploadBlockedError,
+            };
+        }
+
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 

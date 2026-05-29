@@ -1,6 +1,6 @@
 export const SiteContent = {
     title: "Docs Diver",
-    description: "Upload technical documents, search them semantically, and get citation-based AI answers.",
+    description: "Upload technical documents and get citation-based AI answers.",
     dashboard: "Dashboard",
     workspaces: "Workspaces",
     workspacesDescription: "Organize documents, ask questions, and generate grounded answers.",
@@ -13,6 +13,7 @@ export const SiteContent = {
     chats: "Chats",
     firstQuestion: "Upload a document to enable chat",
     welcomeMessage: "Nice, your first document is indexed. Ask me anything about it and I will answer with source-backed citations.",
+    demoWelcomeMessage: "Welcome to the demo. I have already loaded Alice in Wonderland for you, so feel free to ask anything about the story, the characters, or specific passages from the novel.",
     questionPlaceholder: "Ask a question about your documents...",
     promptDescription: "Once documents are indexed, answers will include citations from your sources.",
     ask: "Ask",
@@ -103,5 +104,8 @@ export const SiteContent = {
     lastPage: "Last page",
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",
+    demoWorkspaceLockedError: "Demo workspace cannot be renamed or deleted.",
+    demoWorkspaceUploadBlockedError: "Demo workspace does not accept uploads.",
+    demoDocumentDeleteBlockedError: "Demo document cannot be deleted.",
 
 };

@@ -5,12 +5,13 @@ import { SiteContent } from "@/src/lib/content";
 interface HeroProps {
     workspaceName: string;
     documentsCount: number;
+    isDemo: boolean;
     openWorkspaceModal: () => void;
     openDocumentsModal: () => void;
     openUsageModal: () => void;
 }
 
-export const Hero = ({ workspaceName, documentsCount, openWorkspaceModal, openDocumentsModal, openUsageModal }: HeroProps) => {
+export const Hero = ({ workspaceName, documentsCount, isDemo, openWorkspaceModal, openDocumentsModal, openUsageModal }: HeroProps) => {
     return <div className={styles.hero}>
         <div className={styles.content}>
             <h1 className={styles.title}>
@@ -22,15 +23,17 @@ export const Hero = ({ workspaceName, documentsCount, openWorkspaceModal, openDo
         </div>
 
         <div className={styles.actions}>
-            <button
-                type="button"
-                className={styles.usageButton}
-                onClick={openWorkspaceModal}
-                aria-label={SiteContent.workspaceSettings}
-                title={SiteContent.workspaceSettings}
-            >
-                <Pen className={styles.usageIcon} aria-hidden="true" />
-            </button>
+            {!isDemo ? (
+                <button
+                    type="button"
+                    className={styles.usageButton}
+                    onClick={openWorkspaceModal}
+                    aria-label={SiteContent.workspaceSettings}
+                    title={SiteContent.workspaceSettings}
+                >
+                    <Pen className={styles.usageIcon} aria-hidden="true" />
+                </button>
+            ) : null}
 
             <button
                 type="button"

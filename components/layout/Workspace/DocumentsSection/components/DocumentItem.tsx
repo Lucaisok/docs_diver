@@ -5,10 +5,11 @@ import styles from "./documentItem.module.css";
 
 type DocumentItemProps = {
     document: WorkspaceDocument;
+    canDelete?: boolean;
     onDeleteClick: (document: WorkspaceDocument) => void;
 };
 
-export const DocumentItem = ({ document, onDeleteClick }: DocumentItemProps) => {
+export const DocumentItem = ({ document, canDelete = true, onDeleteClick }: DocumentItemProps) => {
     return (
         <div className={styles.documentRow}>
             <div>
@@ -17,15 +18,17 @@ export const DocumentItem = ({ document, onDeleteClick }: DocumentItemProps) => 
                     {SiteContent.status}: {document.status.toLowerCase()} | {document._count.chunks} {SiteContent.chunks}
                 </p>
             </div>
-            <button
-                type="button"
-                className={styles.deleteIconButton}
-                aria-label={SiteContent.deleteDocument}
-                title={SiteContent.deleteDocument}
-                onClick={() => onDeleteClick(document)}
-            >
-                <Trash2 className={styles.deleteIcon} aria-hidden="true" />
-            </button>
+            {canDelete ? (
+                <button
+                    type="button"
+                    className={styles.deleteIconButton}
+                    aria-label={SiteContent.deleteDocument}
+                    title={SiteContent.deleteDocument}
+                    onClick={() => onDeleteClick(document)}
+                >
+                    <Trash2 className={styles.deleteIcon} aria-hidden="true" />
+                </button>
+            ) : null}
         </div>
     );
 };

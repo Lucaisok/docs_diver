@@ -13,13 +13,14 @@ import { getFormattedMessages } from "@/src/lib/formatters";
 type ChatPanelProps = {
     workspaceId: string;
     hasDocuments: boolean;
+    isDemo: boolean;
     initialMessages: InitialMessage[];
     messagesError?: string | null;
     onNewAnswer?: () => void;
     onUploadSuccess?: () => void;
 };
 
-export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messagesError, onNewAnswer, onUploadSuccess }: ChatPanelProps) {
+export function ChatPanel({ workspaceId, hasDocuments, isDemo, initialMessages, messagesError, onNewAnswer, onUploadSuccess }: ChatPanelProps) {
     const [chatError, setChatError] = useState<string | null>(null);
     const [hasAvailableDocuments, setHasAvailableDocuments] = useState(hasDocuments);
     const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
@@ -74,6 +75,7 @@ export function ChatPanel({ workspaceId, hasDocuments, initialMessages, messages
                 isLoading={isLoading}
                 isThinking={isThinking}
                 hasDocuments={hasAvailableDocuments}
+                isDemo={isDemo}
                 showWelcomeMessage={showWelcomeMessage}
                 onUploadSuccess={() => {
                     setHasAvailableDocuments(true);

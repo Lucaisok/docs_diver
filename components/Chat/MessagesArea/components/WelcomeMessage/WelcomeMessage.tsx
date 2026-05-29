@@ -6,10 +6,11 @@ import styles from "./welcomeMessage.module.css";
 
 type WelcomeMessageProps = {
     isActive: boolean;
+    text?: string;
 };
 
-export const WelcomeMessage = ({ isActive }: WelcomeMessageProps) => {
-    const fullText = SiteContent.welcomeMessage;
+export const WelcomeMessage = ({ isActive, text = SiteContent.welcomeMessage }: WelcomeMessageProps) => {
+    const fullText = text;
     const [visibleText, setVisibleText] = useState("");
 
     useEffect(() => {

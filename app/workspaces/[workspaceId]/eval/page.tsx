@@ -3,7 +3,7 @@ import { getAIRequestLogs } from "@/src/server/queries/ai-request-logs";
 import { SiteContent } from "@/src/lib/content";
 import styles from "./page.module.css";
 import { AIUsagePanel } from "@/components/AIUsagePanel/AIUsagePanel";
-import { getCurrentUserId } from "@/src/server/auth/session-user";
+import { getCurrentUserIdOrRedirect } from "@/src/server/auth/session-user";
 
 
 type EvalPageProps = {
@@ -14,7 +14,7 @@ type EvalPageProps = {
 
 export default async function EvalPage({ params }: EvalPageProps) {
     const { workspaceId } = await params;
-    const userId = await getCurrentUserId();
+    const userId = await getCurrentUserIdOrRedirect(`/workspaces/${workspaceId}/eval`);
     const logs = await getAIRequestLogs(workspaceId, userId);
 
     return (

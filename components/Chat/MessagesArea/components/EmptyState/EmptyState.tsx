@@ -9,17 +9,18 @@ import styles from "./emptyState.module.css";
 
 type EmptyStateProps = {
     workspaceId: string;
+    isDemo?: boolean;
     onUploadSuccess?: () => void;
 };
 
-export const EmptyState = ({ workspaceId, onUploadSuccess }: EmptyStateProps) => {
+export const EmptyState = ({ workspaceId, isDemo = false, onUploadSuccess }: EmptyStateProps) => {
     const router = useRouter();
     const inputRef = useRef<HTMLInputElement>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const openFilePicker = () => {
-        if (isUploading) {
+        if (isUploading || isDemo) {
             return;
         }
 
@@ -59,21 +60,23 @@ export const EmptyState = ({ workspaceId, onUploadSuccess }: EmptyStateProps) =>
 
     return (
         <>
-            <button type="button" className={styles.emptyState} onClick={openFilePicker} disabled={isUploading}>
+            <button type="button" className={styles.emptyState} onClick={openFilePicker} disabled={isUploading || isDemo}>
                 <p className={styles.emptyStateTitle}>
                     {isUploading ? <Loader2 className={styles.spinner} aria-hidden="true" /> : SiteContent.firstQuestion}
                 </p>
                 {error ? <p className={styles.error}>{error}</p> : null}
                 <p className={styles.emptyStateDescription}>{SiteContent.promptDescription}</p>
             </button>
-            <input
-                ref={inputRef}
-                className={styles.hiddenInput}
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileChange}
-                disabled={isUploading}
-            />
+            {!isDemo ? (
+                <input
+                    ref={inputRef}
+                    className={styles.hiddenInput}
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                    disabled={isUploading}
+                />
+            ) : null}
         </>
     );
 };

@@ -5,6 +5,7 @@ import { MessageItem } from "./components/MessageItem/MessageItem";
 import { EmptyState } from "./components/EmptyState/EmptyState";
 import { LoadingState } from "./components/LoadingState/LoadingState";
 import { WelcomeMessage } from "./components/WelcomeMessage/WelcomeMessage";
+import { SiteContent } from "@/src/lib/content";
 
 interface MessagesAreaProps {
     workspaceId: string;
@@ -12,12 +13,14 @@ interface MessagesAreaProps {
     isLoading: boolean;
     isThinking: boolean;
     hasDocuments: boolean;
+    isDemo: boolean;
     showWelcomeMessage?: boolean;
     onUploadSuccess?: () => void;
 }
 
-export const MessagesArea = ({ workspaceId, displayMessages, isLoading, isThinking, hasDocuments, showWelcomeMessage = false, onUploadSuccess }: MessagesAreaProps) => {
+export const MessagesArea = ({ workspaceId, displayMessages, isLoading, isThinking, hasDocuments, isDemo, showWelcomeMessage = false, onUploadSuccess }: MessagesAreaProps) => {
     const transcriptRef = useRef<HTMLDivElement>(null);
+    const showDemoIntro = displayMessages.length === 0 && hasDocuments && isDemo;
 
     useEffect(() => {
         if (transcriptRef.current) {
@@ -29,7 +32,11 @@ export const MessagesArea = ({ workspaceId, displayMessages, isLoading, isThinki
         <div className={styles.messagesArea}>
             <div ref={transcriptRef} className={`${styles.transcript} ${displayMessages.length > 0 ? styles.transcriptMasked : ""}`}>
                 {displayMessages.length === 0 && !hasDocuments ? (
-                    <EmptyState workspaceId={workspaceId} onUploadSuccess={onUploadSuccess} />
+                    isDemo
+                        ? <EmptyState workspaceId={workspaceId} isDemo={isDemo} />
+                        : <EmptyState workspaceId={workspaceId} onUploadSuccess={onUploadSuccess} isDemo={isDemo} />
+                ) : showDemoIntro ? (
+                    <WelcomeMessage isActive text={SiteContent.demoWelcomeMessage} />
                 ) : (
                     <>
                         <WelcomeMessage isActive={showWelcomeMessage && hasDocuments} />
