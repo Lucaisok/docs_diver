@@ -1,19 +1,19 @@
 "use server";
 import { SiteContent } from "@/src/lib/content";
+import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { prisma } from "@/src/lib/prisma";
 import { Result } from "@/src/types/result";
 import { revalidatePath } from "next/cache";
+import path from "node:path";
 import { deleteFileIfPresent, resolveUploadPath } from "../utils/utils";
-import { getCurrentUserId } from "../auth/session-user";
 
 export async function deleteDocument(documentId: string, workspaceId: string): Promise<Result<null>> {
     try {
-        const userId = await getCurrentUserId();
         const document = await prisma.document.findFirst({
             where: {
                 id: documentId,
                 workspaceId,
-                userId: userId,
+                userId: DEV_USER_ID,
             },
         });
 

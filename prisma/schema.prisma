@@ -20,13 +20,11 @@ enum MessageRole {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  email       String    @unique
-  name        String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  isAnonymous Boolean   @default(false)
-  expiresAt   DateTime?
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   workspaces    Workspace[]
   documents     Document[]
@@ -40,7 +38,6 @@ model Workspace {
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  isDemo    Boolean  @default(false)
 
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   documents     Document[]
@@ -62,7 +59,6 @@ model Document {
   error       String?
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-  isDemo      Boolean        @default(false)
 
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)

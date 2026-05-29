@@ -1,9 +1,9 @@
 import { AppShell } from "@/components/AppShell/AppShell";
+import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { getAIRequestLogs } from "@/src/server/queries/ai-request-logs";
 import { SiteContent } from "@/src/lib/content";
 import styles from "./page.module.css";
 import { AIUsagePanel } from "@/components/AIUsagePanel/AIUsagePanel";
-import { getCurrentUserId } from "@/src/server/auth/session-user";
 
 
 type EvalPageProps = {
@@ -14,8 +14,7 @@ type EvalPageProps = {
 
 export default async function EvalPage({ params }: EvalPageProps) {
     const { workspaceId } = await params;
-    const userId = await getCurrentUserId();
-    const logs = await getAIRequestLogs(workspaceId, userId);
+    const logs = await getAIRequestLogs(workspaceId, DEV_USER_ID);
 
     return (
         <AppShell>
