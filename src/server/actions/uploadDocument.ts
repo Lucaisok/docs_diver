@@ -3,10 +3,10 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/src/lib/prisma";
-import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { SiteContent } from "@/src/lib/content";
 import { Result } from "@/src/types/result";
 import { createSafeFileName, deleteFileIfPresent, writeChunks } from "../utils/utils";
+import { getCurrentUserId } from "../auth/session-user";
 
 // Server action that handles the full document ingestion pipeline:
 //   1. Validate the uploaded file (must be a non-empty PDF belonging to the current workspace)
@@ -44,10 +44,11 @@ export const uploadDocument = async (formData: FormData): Promise<Result<null>> 
     }
 
     try {
+        const userId = await getCurrentUserId();
         const workspace = await prisma.workspace.findFirst({
             where: {
                 id: workspaceId,
-                userId: DEV_USER_ID,
+                userId: userId,
             },
         });
         if (!workspace) {
@@ -71,7 +72,7 @@ export const uploadDocument = async (formData: FormData): Promise<Result<null>> 
         const document = await prisma.document.create({
             data: {
                 workspaceId,
-                userId: DEV_USER_ID,
+                userId: userId,
                 name: file.name,
                 filePath,
                 mimeType: file.type,

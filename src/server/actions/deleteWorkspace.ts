@@ -1,18 +1,18 @@
 "use server";
-
 import { SiteContent } from "@/src/lib/content";
-import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { prisma } from "@/src/lib/prisma";
 import { Result } from "@/src/types/result";
 import { revalidatePath } from "next/cache";
 import { deleteFileIfPresent, removeWorkspaceUploadsDirectory } from "../utils/utils";
+import { getCurrentUserId } from "../auth/session-user";
 
 export async function deleteWorkspace(workspaceId: string): Promise<Result<null>> {
     try {
+        const userId = await getCurrentUserId();
         const workspace = await prisma.workspace.findFirst({
             where: {
                 id: workspaceId,
-                userId: DEV_USER_ID,
+                userId: userId,
             },
         });
 
@@ -24,7 +24,7 @@ export async function deleteWorkspace(workspaceId: string): Promise<Result<null>
         const documents = await prisma.document.findMany({
             where: {
                 workspaceId,
-                userId: DEV_USER_ID,
+                userId: userId,
             },
             select: {
                 filePath: true,

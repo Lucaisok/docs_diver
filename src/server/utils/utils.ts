@@ -6,7 +6,6 @@ import { rm, unlink } from "fs/promises";
 import path from "path";
 import { SiteContent } from "@/src/lib/content";
 import { prisma } from "@/src/lib/prisma";
-import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { RetrievedChunk, retrieveRelevantChunks } from "../ai/retrieval";
 import { Citation } from "@/src/types/message";
 import { Prisma } from "@prisma/client";
@@ -261,13 +260,13 @@ type WorkspaceAccessResult =
     | { ok: true; }
     | { ok: false; response: Response; };
 
-export const assertWorkspaceAccess = async (workspaceId: string): Promise<WorkspaceAccessResult> => {
+export const assertWorkspaceAccess = async (userId: string, workspaceId: string): Promise<WorkspaceAccessResult> => {
     try {
         const workspace = await prisma.workspace.findUnique({
             where: { id: workspaceId },
         });
 
-        if (!workspace || workspace.userId !== DEV_USER_ID) {
+        if (!workspace || workspace.userId !== userId) {
             return {
                 ok: false,
                 response: new Response(JSON.stringify({ error: SiteContent.workspaceUnauthorizedError }), {
@@ -314,12 +313,12 @@ type SaveUserMessageResult =
     | { ok: true; }
     | { ok: false; response: Response; };
 
-export const saveUserMessage = async (workspaceId: string, messageContent: string): Promise<SaveUserMessageResult> => {
+export const saveUserMessage = async (userId: string, workspaceId: string, messageContent: string): Promise<SaveUserMessageResult> => {
     try {
         await prisma.message.create({
             data: {
                 workspaceId,
-                userId: DEV_USER_ID,
+                userId,
                 role: "USER",
                 content: messageContent,
             },
@@ -451,12 +450,12 @@ export const filterUsedCitations = (answerText: string, citations: Citation[]): 
         .filter((citation): citation is Citation => citation !== undefined);
 };
 
-export const saveModelAnswer = async (workspaceId: string, text: string, citations: Citation[]) => {
+export const saveModelAnswer = async (userId: string, workspaceId: string, text: string, citations: Citation[]) => {
     try {
         await prisma.message.create({
             data: {
                 workspaceId,
-                userId: DEV_USER_ID,
+                userId,
                 role: "ASSISTANT",
                 content: text,
                 citations
@@ -468,7 +467,7 @@ export const saveModelAnswer = async (workspaceId: string, text: string, citatio
     }
 };
 
-export const saveAIRequestLog = async (selectedChunks: Citation[], usedChunks: Citation[], workspaceId: string, messageContent: string, estimatedInputTokens: number, streamedText: string, startedAt: number, model: string = "gpt-4o-mini") => {
+export const saveAIRequestLog = async (userId: string, selectedChunks: Citation[], usedChunks: Citation[], workspaceId: string, messageContent: string, estimatedInputTokens: number, streamedText: string, startedAt: number, model: string = "gpt-4o-mini") => {
     const avgSimilarity =
         selectedChunks.length > 0
             ? selectedChunks.reduce(
@@ -480,7 +479,7 @@ export const saveAIRequestLog = async (selectedChunks: Citation[], usedChunks: C
     await prisma.aIRequestLog.create({
         data: {
             workspaceId,
-            userId: DEV_USER_ID,
+            userId,
             question: messageContent,
             answer: streamedText,
             model: model,

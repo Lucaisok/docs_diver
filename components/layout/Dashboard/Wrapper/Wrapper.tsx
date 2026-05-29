@@ -1,9 +1,10 @@
 import { getWorkspacesByUserId } from "@/src/server/queries/workspaces";
-import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { DashboardShell } from "./DashboardShell";
+import { getCurrentUserId } from "@/src/server/auth/session-user";
 
 export const Wrapper = async () => {
-    const result = await getWorkspacesByUserId(DEV_USER_ID);
+    const userId = await getCurrentUserId();
+    const result = await getWorkspacesByUserId(userId);
 
     return <DashboardShell workspaces={result.data} workspacesError={result.error} />;
 };

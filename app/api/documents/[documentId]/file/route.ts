@@ -1,6 +1,6 @@
-import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { SiteContent } from "@/src/lib/content";
 import { prisma } from "@/src/lib/prisma";
+import { getCurrentUserId } from "@/src/server/auth/session-user";
 import { NextRequest } from "next/server";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -14,6 +14,14 @@ type RouteProps = {
 export async function GET(_req: NextRequest, { params }: RouteProps) {
     try {
         const { documentId } = await params;
+        const userId = await getCurrentUserId();
+
+        if (!userId) {
+            return new Response(JSON.stringify({ error: SiteContent.noUserIdError }), {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+            });
+        }
 
         if (!documentId) {
             return new Response(JSON.stringify({ error: SiteContent.noDocumentIdError }), {
@@ -25,7 +33,7 @@ export async function GET(_req: NextRequest, { params }: RouteProps) {
         const document = await prisma.document.findFirst({
             where: {
                 id: documentId,
-                userId: DEV_USER_ID,
+                userId: userId,
             },
         });
 

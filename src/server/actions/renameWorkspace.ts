@@ -3,11 +3,11 @@
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { SiteContent } from "@/src/lib/content";
-import { DEV_USER_ID } from "@/src/lib/dev-user";
 import { prisma } from "@/src/lib/prisma";
 import { Result } from "@/src/types/result";
+import { getCurrentUserId } from "../auth/session-user";
 
-export async function renameWorkspace(workspaceId: string, name: string): Promise<Result<null>> {
+export const renameWorkspace = async (workspaceId: string, name: string): Promise<Result<null>> => {
     const trimmedName = name.trim();
 
     if (!workspaceId) {
@@ -19,10 +19,11 @@ export async function renameWorkspace(workspaceId: string, name: string): Promis
     }
 
     try {
+        const userId = await getCurrentUserId();
         const workspace = await prisma.workspace.findFirst({
             where: {
                 id: workspaceId,
-                userId: DEV_USER_ID,
+                userId: userId,
             },
             select: {
                 id: true,
@@ -53,4 +54,4 @@ export async function renameWorkspace(workspaceId: string, name: string): Promis
 
         return { success: false, data: null, error: SiteContent.workspaceRenameError };
     }
-}
+};

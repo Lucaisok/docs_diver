@@ -2,11 +2,13 @@ import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { parseAndValidateRequest, systemPrompt, assertWorkspaceAccess, getLastMessageContent, saveUserMessage, getChunks, buildMessageAndHistory, saveModelAnswer, buildCitations as formatChunkAsCitations, selectBestChunks, filterUsedCitations, saveAIRequestLog } from "@/src/server/utils/utils";
 import { SiteContent } from "@/src/lib/content";
+import { getCurrentUserId } from "@/src/server/auth/session-user";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
     try {
+        const userId = await getCurrentUserId();
         const startedAt = Date.now();
         //parse and validate request
         const parseAndValidatResult = await parseAndValidateRequest(req);
@@ -14,7 +16,7 @@ export async function POST(req: Request) {
         const { messages, workspaceId } = parseAndValidatResult.data;
 
         //assert workspace exist and user has access
-        const workspaceResult = await assertWorkspaceAccess(workspaceId);
+        const workspaceResult = await assertWorkspaceAccess(userId, workspaceId);
         if (!workspaceResult.ok) return workspaceResult.response;
 
         //retrieve last message content
@@ -23,7 +25,7 @@ export async function POST(req: Request) {
         const { messageContent } = getLastMessageResult.data;
 
         // Save user message
-        const saveResult = await saveUserMessage(workspaceId, messageContent);
+        const saveResult = await saveUserMessage(userId, workspaceId, messageContent);
         if (!saveResult.ok) return saveResult.response;
 
         // Retrieve relevant document chunks for context
@@ -48,8 +50,8 @@ export async function POST(req: Request) {
             ],
             async onFinish({ text }) {
                 const usedCitations = filterUsedCitations(text || streamedText, chunksAsCitations);
-                await saveModelAnswer(workspaceId, text, usedCitations);
-                await saveAIRequestLog(chunksAsCitations, usedCitations, workspaceId, messageContent, estimatedInputTokens, text || streamedText, startedAt);
+                await saveModelAnswer(userId, workspaceId, text, usedCitations);
+                await saveAIRequestLog(userId, chunksAsCitations, usedCitations, workspaceId, messageContent, estimatedInputTokens, text || streamedText, startedAt);
             },
         });
 

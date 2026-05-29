@@ -28,7 +28,7 @@ export const SiteContent = {
     workspaceNameRequired: "Workspace name is required",
     workspaceNameExists: "A workspace with this name already exists",
     workspaceCreationError: "Unable to create workspace right now. Please try again.",
-    noUserIdError: "User id is required to load workspaces.",
+    noUserIdError: "User id is required.",
     getWorkspacesError: "Unable to load workspaces right now. Please try again.",
     noWorkspaceIdError: "Workspace id is required.",
     noDocumentIdError: "Document id is required.",
