@@ -43,6 +43,7 @@ export async function deleteWorkspace(workspaceId: string): Promise<Result<null>
 
         await removeWorkspaceUploadsDirectory(workspaceId);
 
+        revalidatePath("/dashboard");
         revalidatePath(`/workspaces/${workspaceId}`);
         return { success: true, data: null, error: null };
 

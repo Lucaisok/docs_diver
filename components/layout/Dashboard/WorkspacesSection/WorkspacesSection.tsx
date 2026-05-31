@@ -10,7 +10,6 @@ interface WorkspacesSectionProps {
 }
 
 export const WorkspacesSection = ({ workspaces, error, onCreateWorkspace }: WorkspacesSectionProps) => {
-
     if (error || !workspaces) {
         return <p className={styles.error}>{error}</p>;
     }
