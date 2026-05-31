@@ -4,7 +4,9 @@ export const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-//simplified version, unused.
+// Converts an array of text strings into embedding vectors using OpenAI's
+// text-embedding-3-small model (1536 dimensions). 
+// Used for user questions
 export const createEmbedding = async (input: string) => {
     const response = await openai.embeddings.create({
         model: "text-embedding-3-small",
@@ -14,11 +16,11 @@ export const createEmbedding = async (input: string) => {
     return response.data[0].embedding;
 };
 
-// Converts an array of text strings into embedding vectors using OpenAI's
-// text-embedding-3-small model (1536 dimensions). Inputs are processed in
+// Here Inputs are processed in
 // batches of 64 to stay within API limits. The response items are sorted by
 // their original index before being collected, because the API does not
 // guarantee order when batching.
+// Used for documents embeddings
 export const createEmbeddings = async (inputs: string[]) => {
     if (inputs.length === 0) {
         return [];

@@ -10,6 +10,7 @@ const looksLikeHeading = (line: string) => {
     if (!trimmed) return false;
     if (trimmed.length > 120) return false;
 
+    // Heuristics tuned for extracted PDF text where heading markup is inconsistent.
     return (
         /^#{1,6}\s+/.test(trimmed) || // markdown heading
         /^\d+(\.\d+)*\s+/.test(trimmed) || // 1. / 1.2 / 2.3.1
@@ -25,6 +26,7 @@ const splitIntoSections = (text: string) => {
     let current: string[] = [];
 
     for (const line of lines) {
+        // Start a new section when a heading is found after some collected content.
         if (looksLikeHeading(line) && current.length > 0) {
             sections.push(current.join("\n").trim());
             current = [line];
@@ -49,6 +51,7 @@ const splitLongText = (
     let start = 0;
 
     while (start < text.length) {
+        // Create an initial fixed-size window.
         let end = Math.min(start + maxChars, text.length);
 
         const slice = text.slice(start, end);
@@ -60,6 +63,7 @@ const splitLongText = (
             slice.lastIndexOf("! ")
         );
 
+        // Prefer breaking on paragraph/sentence boundaries when close enough to window end.
         if (end < text.length) {
             if (lastParagraphBreak > maxChars * 0.5) {
                 end = start + lastParagraphBreak;
@@ -73,6 +77,7 @@ const splitLongText = (
 
         if (end >= text.length) break;
 
+        // Move forward with overlap to preserve context across adjacent chunks.
         start = Math.max(0, end - overlapChars);
     }
 
@@ -87,6 +92,7 @@ export const chunkText = (
         minChars = 500,
     }: ChunkTextOptions = {}
 ): string[] => {
+    // Normalize whitespace so heading/sentence detection is more predictable.
     const cleaned = text
         .replace(/\r/g, "")
         .replace(/[ \t]+/g, " ")
@@ -101,7 +107,9 @@ export const chunkText = (
     let buffer = "";
 
     for (const section of sections) {
+        // Very large sections are split directly with overlap for retrieval continuity.
         if (section.length > maxChars) {
+            // Flush any meaningful buffered content before handling the large section.
             if (buffer.length >= minChars) {
                 chunks.push(buffer.trim());
                 buffer = "";
@@ -111,11 +119,13 @@ export const chunkText = (
             continue;
         }
 
+        // Keep appending sections while we stay under max chunk size.
         const candidate = buffer ? `${buffer}\n\n${section}` : section;
 
         if (candidate.length <= maxChars) {
             buffer = candidate;
         } else {
+            // Candidate overflowed: emit current buffer and start a new one.
             if (buffer.trim()) chunks.push(buffer.trim());
             buffer = section;
         }

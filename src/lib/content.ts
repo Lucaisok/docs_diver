@@ -103,5 +103,10 @@ export const SiteContent = {
     lastPage: "Last page",
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",
+    notFoundCode: "404",
+    notFoundTitle: "Page Not Found",
+    notFoundDescription: "The page you are looking for does not exist or is no longer available.",
+    goToDashboard: "Go To Dashboard",
+    backToHome: "Back To Home",
 
 };

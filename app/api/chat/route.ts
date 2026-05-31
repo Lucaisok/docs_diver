@@ -8,28 +8,24 @@ export const runtime = "nodejs";
 export async function POST(req: Request) {
     try {
         const startedAt = Date.now();
-        //parse and validate request
         const parseAndValidatResult = await parseAndValidateRequest(req);
         if (!parseAndValidatResult.ok) return parseAndValidatResult.response;
         const { messages, workspaceId } = parseAndValidatResult.data;
 
-        //assert workspace exist and user has access
         const workspaceResult = await assertWorkspaceAccess(workspaceId);
         if (!workspaceResult.ok) return workspaceResult.response;
 
-        //retrieve last message content
         const getLastMessageResult = getLastMessageContent(messages);
         if (!getLastMessageResult.ok) return getLastMessageResult.response;
         const { messageContent } = getLastMessageResult.data;
 
-        // Save user message
         const saveResult = await saveUserMessage(workspaceId, messageContent);
         if (!saveResult.ok) return saveResult.response;
 
         // Retrieve relevant document chunks for context
         const chunks = await getChunks(workspaceId, messageContent);
-        // Chunks selection strategy
         const selectedChunks = selectBestChunks(chunks);
+
         //build message with context and format message history for model
         const { history, messageWithContext, estimatedInputTokens } = buildMessageAndHistory(selectedChunks, messages, messageContent);
 

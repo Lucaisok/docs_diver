@@ -24,7 +24,6 @@ export function AIUsagePanel({ log }: AIUsagePanelProps) {
     return (
         <div className={`${styles.panel} ${styles.panelContent}`}>
             <div>
-                {/* <p className={styles.title}>{SiteContent.lastAIRequest}</p> */}
                 <MetaSection
                     model={log.model}
                     estimatedInputTokens={log.estimatedInputTokens}
