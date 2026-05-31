@@ -19,7 +19,7 @@ export const WorkspaceCard = ({ id, name, documentsCount, lastUpdate }: Workspac
     >
         <Card title={name}>
             <div className={styles.meta}>
-                <p className={styles.documents}>{documentsCount} {SiteContent.documents}</p>
+                <p className={styles.documents}>{documentsCount} {documentsCount === 1 ? 'Document' : SiteContent.documents}</p>
                 <p className={styles.updated}>{SiteContent.updated} {lastUpdate}</p>
             </div>
         </Card>

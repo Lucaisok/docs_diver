@@ -7,7 +7,7 @@ export const SiteContent = {
     newWorkspace: "New workspace",
     documents: "Documents",
     updated: "Updated",
-    askQuestions: "Ask questions across indexed technical documents.",
+    askQuestions: "Ask questions across indexed documents.",
     uploadPDF: "Upload PDF",
     chat: "Chat",
     chats: "Chats",
